@@ -29,6 +29,7 @@ fltk.rectangle(0, 0, WIDTH, HEIGHT, remplissage="lightgrey", tag="background")
 grille = [[None] * NB_CASES for _ in range(NB_CASES)]
 tuiles = reader.cree_dico("fichiers fournis/tuiles/")
 choix = False
+generation = False
 
 while True:
     ev = fltk.donne_ev()
@@ -71,13 +72,17 @@ while True:
                         grille[i][j] = None
         elif fltk.type_ev(ev) == "Touche":
             touche = fltk.touche(ev)
-            if touche == "a":
-                if solver.solver_nul(grille, tuiles):
+            if touche == "p":#profondeur
+                generation = True
+            elif touche == "l":#largeur trop lent
+                if solver.solver_largeur(grille, tuiles):
+                    print("ui")
                     for i in range(len(grille)):
                         for j in range(len(grille[0])):
                             k, l = convert_indice_click(i, j)
                             fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i}_{j}")
             elif touche == "z":
+                generation = True
                 for i in reversed(range(len(grille))):
                     for j in range(len(grille[0])):
                         if grille[i][j] is not None:
@@ -88,6 +93,7 @@ while True:
                             k, l = convert_indice_click(i, j)
                             fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i}_{j}")
             elif touche == "d":
+                generation = True
                 for i in range(len(grille)):
                     for j in range(len(grille[0])):
                         if grille[i][j] is not None:
@@ -97,6 +103,7 @@ while True:
                             k, l = convert_indice_click(i, j)
                             fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i}_{j}")
             elif touche == "s":
+                generation = True
                 for i in range(len(grille)):
                     for j in range(len(grille[0])):
                         if grille[i][j] is not None:
@@ -107,6 +114,7 @@ while True:
                             k, l = convert_indice_click(i, j)
                             fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i}_{j}")
             elif touche == "q":
+                generation = True
                 for i in range(len(grille)):
                     for j in reversed(range(len(grille[0]))):
                         if grille[i][j] is not None:
@@ -115,6 +123,12 @@ while True:
                         if grille[i][j] is not None:
                             k, l = convert_indice_click(i, j)
                             fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i}_{j}")
-    
+    if generation:
+        generation = False
+        if solver.solver_profondeur(grille, tuiles):
+            for i in range(len(grille)):
+                for j in range(len(grille[0])):
+                    k, l = convert_indice_click(i, j)
+                    fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i}_{j}")
     fltk.mise_a_jour()
     
