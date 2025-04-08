@@ -62,5 +62,14 @@ while True:
                             grille[i][j] = tuile["nom"]
                             fltk.image(k, l, tuile["chemin"], WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", tuile["nom"] + f"_{i}_{j}")
                             break
+        elif fltk.type_ev(ev) == "ClicDroit":
+            x, y = fltk.abscisse(ev), fltk.ordonnee(ev)
+            if not choix:
+                i, j = convert_click_indice(x, y)
+                k, l = convert_indice_click(i, j)
+                if grille[i][j] is not None:
+                        fltk.efface(grille[i][j] + f"_{i}_{j}")
+                        grille[i][j] = None
+    
     fltk.mise_a_jour()
     
