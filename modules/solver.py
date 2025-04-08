@@ -10,6 +10,17 @@ def grille_remplie(grille: list[list[str]]):
                 return False
     return True
 
+def tuile_contrainte(tuiles: list[dict], grille: list[list[str]]) -> tuple | None:
+    min_taille = None
+    for i in range(len(grille)):
+        for j in range(len(grille[0])):
+            if grille[i][j] is None:
+                tuiles_possibles = gestion_tuiles.tuiles_possibles(tuiles, grille, i, j)
+                if min_taille is None or len(tuiles_possibles) < min_taille:
+                    contrainte = (i, j, tuiles_possibles)
+                    min_taille = len(tuiles_possibles)
+    return contrainte
+
 def grille_tuple(grille: list[list[str]]) -> tuple:
     return tuple(tuple(tuiles) for tuiles in grille)
 
@@ -29,6 +40,22 @@ def solver_profondeur(grille: list[list[str]], tuiles: list[dict]) -> bool:
                         return True
                     grille[i][j] = None
     return False
+
+def solver_profondeur_contrainte(grille: list[list[str]], tuiles: list[dict]) -> bool:
+    if grille_remplie(grille):
+        return True
+    i, j, tuiles_possibles = tuile_contrainte(tuiles, grille)
+    if len(tuiles_possibles) == 0:
+        return False
+    random.shuffle(tuiles_possibles)
+    for tuile in tuiles_possibles:
+        grille[i][j] = tuile["nom"]
+        if solver_profondeur_contrainte(grille, tuiles):
+            return True
+        grille[i][j] = None
+    return False
+
+
 
 def solver_largeur(grille: list[list[str]], tuiles: list[dict]) -> bool:
     queue = deque()
