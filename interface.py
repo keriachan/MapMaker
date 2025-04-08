@@ -1,4 +1,4 @@
-from modules import fltk, gestion_tuiles, reader
+from modules import fltk, gestion_tuiles, reader, solver
 import random
 
 WIDTH, HEIGHT = 500, 500
@@ -69,6 +69,52 @@ while True:
                 if grille[i][j] is not None:
                         fltk.efface(grille[i][j] + f"_{i}_{j}")
                         grille[i][j] = None
+        elif fltk.type_ev(ev) == "Touche":
+            touche = fltk.touche(ev)
+            if touche == "a":
+                if solver.solver_nul(grille, tuiles):
+                    for i in range(len(grille)):
+                        for j in range(len(grille[0])):
+                            k, l = convert_indice_click(i, j)
+                            fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i}_{j}")
+            elif touche == "z":
+                for i in reversed(range(len(grille))):
+                    for j in range(len(grille[0])):
+                        if grille[i][j] is not None:
+                            fltk.efface(grille[i][j] + f"_{i}_{j}")
+                    grille[i] = [None]*NB_CASES if i-1 < 0 else grille[i-1]
+                    for j in range(len(grille[0])):
+                        if grille[i][j] is not None:
+                            k, l = convert_indice_click(i, j)
+                            fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i}_{j}")
+            elif touche == "d":
+                for i in range(len(grille)):
+                    for j in range(len(grille[0])):
+                        if grille[i][j] is not None:
+                            fltk.efface(grille[i][j] + f"_{i}_{j}")
+                        grille[i][j] = None if j+1 > NB_CASES-1 else grille[i][j+1]
+                        if grille[i][j] is not None:
+                            k, l = convert_indice_click(i, j)
+                            fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i}_{j}")
+            elif touche == "s":
+                for i in range(len(grille)):
+                    for j in range(len(grille[0])):
+                        if grille[i][j] is not None:
+                            fltk.efface(grille[i][j] + f"_{i}_{j}")
+                    grille[i] = [None]*NB_CASES if i+1 > NB_CASES-1 else grille[i+1]
+                    for j in range(len(grille[0])):
+                        if grille[i][j] is not None:
+                            k, l = convert_indice_click(i, j)
+                            fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i}_{j}")
+            elif touche == "q":
+                for i in range(len(grille)):
+                    for j in reversed(range(len(grille[0]))):
+                        if grille[i][j] is not None:
+                            fltk.efface(grille[i][j] + f"_{i}_{j}")
+                        grille[i][j] = None if j-1 < 0 else grille[i][j-1]
+                        if grille[i][j] is not None:
+                            k, l = convert_indice_click(i, j)
+                            fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i}_{j}")
     
     fltk.mise_a_jour()
     
