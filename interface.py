@@ -41,8 +41,7 @@ while True:
                 i, j = convert_click_indice(x, y)
                 k, l = convert_indice_click(i, j)
                 if grille[i][j] is not None:
-                    fltk.efface(grille[i][j] + f"_{i}_{j}")
-                    grille[i][j] = None
+                    continue
                 tuiles_possibles = gestion_tuiles.tuiles_possibles(tuiles, grille, i, j)
                 if len(tuiles_possibles) == 0:
                     print("Pas de tuiles possibles")
