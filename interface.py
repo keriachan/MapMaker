@@ -18,9 +18,9 @@ def champs_possibilites(tuiles_possibles_alea):
         for j in range(5):
             if index_tuile > len(tuiles_possibles_alea)-1:
                 break
-            width_tuile, height_tuile = (WIDTH - 2*MARGIN)//5 - 2*(MARGIN//NB_CASES), (HEIGHT - 2*MARGIN)//5 - 2*(MARGIN//NB_CASES)
-            fltk.rectangle(MARGIN + MARGIN/NB_CASES + j*(WIDTH - 2*MARGIN)/5 - 1, MARGIN + MARGIN/NB_CASES + i*(HEIGHT - 2*MARGIN)/5 - 1, MARGIN + MARGIN/NB_CASES + j*(WIDTH - 2*MARGIN)/5 + width_tuile, MARGIN + MARGIN/NB_CASES + i*(HEIGHT - 2*MARGIN)/5 + height_tuile, "black", epaisseur=1, tag="choices_display")
-            fltk.image(MARGIN + MARGIN/NB_CASES + j*(WIDTH - 2*MARGIN)/5, MARGIN + MARGIN/NB_CASES + i*(HEIGHT - 2*MARGIN)/5, tuiles_possibles_alea[index_tuile]["chemin"], width_tuile, height_tuile, "nw", tuiles_possibles_alea[index_tuile]["nom"])
+            width_tuile, height_tuile = (WIDTH - 2*MARGIN)//5 - 2*(MARGIN//10), (HEIGHT - 2*MARGIN)//5 - 2*(MARGIN//10)
+            fltk.rectangle(MARGIN + MARGIN/10 + j*(WIDTH - 2*MARGIN)/5 - 1, MARGIN + MARGIN/10 + i*(HEIGHT - 2*MARGIN)/5 - 1, MARGIN + MARGIN/10 + j*(WIDTH - 2*MARGIN)/5 + width_tuile, MARGIN + MARGIN/10 + i*(HEIGHT - 2*MARGIN)/5 + height_tuile, "black", epaisseur=1, tag="choices_display")
+            fltk.image(MARGIN + MARGIN/10 + j*(WIDTH - 2*MARGIN)/5, MARGIN + MARGIN/10 + i*(HEIGHT - 2*MARGIN)/5, tuiles_possibles_alea[index_tuile]["chemin"], width_tuile, height_tuile, "nw", tuiles_possibles_alea[index_tuile]["nom"])
             index_tuile += 1
 
 def decale_grille(grille: list[list[str]], dx: int, dy: int):
