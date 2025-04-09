@@ -99,13 +99,23 @@ while True:
             touche = fltk.touche(ev)
             if touche == "p":#profondeur
                 generation = True
+                generator = solver.solver_profondeur
             elif touche == "l":#largeur trop lent
                 if solver.solver_largeur(grille, tuiles):
-                    print("ui")
                     for i in range(len(grille)):
                         for j in range(len(grille[0])):
                             k, l = convert_indice_click(i, j)
                             fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i}_{j}")
+            elif touche == "c":#contrainte
+                generation = True
+                generator = solver.solver_profondeur_contrainte
+            elif touche == "e":#efface
+                for i in range(len(grille)):
+                    for j in range(len(grille[0])):
+                        if grille[i][j] is not None:
+                            fltk.efface(grille[i][j] + f"_{i}_{j}")
+                            grille[i][j] = None
+                
             #MOVEMENT
             if touche == "z":  # haut
                 generation = True
@@ -121,7 +131,8 @@ while True:
                 decale_grille(grille, dx=-1, dy=0)
     if generation:
         generation = False
-        if solver.solver_profondeur(grille, tuiles):
+        print(f"{generator.__name__} en cours...")
+        if generator(grille, tuiles):
             for i in range(len(grille)):
                 for j in range(len(grille[0])):
                     k, l = convert_indice_click(i, j)
