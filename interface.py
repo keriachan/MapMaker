@@ -101,11 +101,8 @@ while True:
                 generation = True
                 generator = solver.solver_profondeur
             elif touche == "l":#largeur trop lent
-                if solver.solver_largeur(grille, tuiles):
-                    for i in range(len(grille)):
-                        for j in range(len(grille[0])):
-                            k, l = convert_indice_click(i, j)
-                            fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i}_{j}")
+                generation = True
+                generator = solver.solver_largeur
             elif touche == "c":#contrainte
                 generation = True
                 generator = solver.solver_profondeur_contrainte
