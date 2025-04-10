@@ -1,8 +1,8 @@
 from modules import fltk, gestion_tuiles, reader, solver
 import random
 
-WIDTH, HEIGHT = 500, 500
-MARGIN = 100
+WIDTH, HEIGHT = 800, 800
+MARGIN = WIDTH//5
 NB_CASES = 10
 
 def convert_click_indice(x, y):#pour 10x10
@@ -51,7 +51,9 @@ def decale_grille(grille: list[list[str]], dx: int, dy: int):
 fltk.cree_fenetre(WIDTH, HEIGHT)
 fltk.rectangle(0, 0, WIDTH, HEIGHT, remplissage="lightgrey", tag="background")
 
-grille = [[None] * NB_CASES for _ in range(NB_CASES)]
+grille_global = [[None] * NB_CASES for _ in range(NB_CASES)]
+grille_affiche = [[None] * NB_CASES for _ in range(NB_CASES)]
+dx , dy = 0, 0
 tuiles = reader.cree_dico("fichiers fournis/tuiles/")
 choix = False
 generation = False
@@ -66,9 +68,9 @@ while True:
             if not choix:
                 i, j = convert_click_indice(x, y)
                 k, l = convert_indice_click(i, j)
-                if grille[i][j] is not None:
+                if grille_affiche[i][j] is not None:
                     continue
-                tuiles_possibles = gestion_tuiles.tuiles_possibles(tuiles, grille, i, j)
+                tuiles_possibles = gestion_tuiles.tuiles_possibles(tuiles, grille_affiche, i, j)
                 if len(tuiles_possibles) == 0:
                     print("Pas de tuiles possibles")
                     continue
@@ -84,7 +86,8 @@ while True:
                             fltk.efface("choices_display")
                             for tuile_bis in tuiles_possibles_alea:
                                 fltk.efface(tuile_bis["nom"])
-                            grille[i][j] = tuile["nom"]
+                            grille_affiche[i][j] = tuile["nom"]
+                            grille_global[i][j] = tuile["nom"]
                             fltk.image(k, l, tuile["chemin"], WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", tuile["nom"] + f"_{i}_{j}")
                             break
         elif fltk.type_ev(ev) == "ClicDroit":
@@ -92,9 +95,10 @@ while True:
             if not choix:
                 i, j = convert_click_indice(x, y)
                 k, l = convert_indice_click(i, j)
-                if grille[i][j] is not None:
-                        fltk.efface(grille[i][j] + f"_{i}_{j}")
-                        grille[i][j] = None
+                if grille_affiche[i][j] is not None:
+                        fltk.efface(grille_affiche[i][j] + f"_{i}_{j}")
+                        grille_affiche[i][j] = None
+                        grille_global[i][j] = None
         elif fltk.type_ev(ev) == "Touche":
             touche = fltk.touche(ev)
             if touche == "p":#profondeur
@@ -107,32 +111,39 @@ while True:
                 generation = True
                 generator = solver.solver_profondeur_contrainte
             elif touche == "e":#efface
-                for i in range(len(grille)):
-                    for j in range(len(grille[0])):
-                        if grille[i][j] is not None:
-                            fltk.efface(grille[i][j] + f"_{i}_{j}")
-                            grille[i][j] = None
+                for i in range(len(grille_affiche)):
+                    for j in range(len(grille_affiche[0])):
+                        if grille_affiche[i][j] is not None:
+                            fltk.efface(grille_affiche[i][j] + f"_{i}_{j}")
+                            grille_affiche[i][j] = None
+            elif touche == "a": #arrete la generation
+                generation = False
                 
             #MOVEMENT
             if touche == "z":  # haut
-                generation = True
-                decale_grille(grille, dx=0, dy=1)
+                decale_grille(grille_affiche, 0, 1)
+                grille_global = [[None] * NB_CASES] + grille_global
             elif touche == "s":  # bas
-                generation = True
-                decale_grille(grille, dx=0, dy=-1)
+                decale_grille(grille_affiche, 0, -1)
+                grille_global = grille_global + [[None] * NB_CASES]
             elif touche == "q":  # gauche
-                generation = True
-                decale_grille(grille, dx=1, dy=0)
+                decale_grille(grille_affiche, 1, 0)
+                grille_temp = []
+                for i in range(len(grille_global)):
+                    grille_temp.append([None] + grille_global[i])
+                grille_global = grille_temp
             elif touche == "d":  # droite
-                generation = True
-                decale_grille(grille, dx=-1, dy=0)
+                decale_grille(grille_affiche, -1, 0)
+                grille_temp = []
+                for i in range(len(grille_global)):
+                    grille_temp.append(grille_global[i] + [None])
+                grille_global = grille_temp
     if generation:
-        generation = False
         print(f"{generator.__name__} en cours...")
-        if generator(grille, tuiles):
-            for i in range(len(grille)):
-                for j in range(len(grille[0])):
+        if generator(grille_affiche, tuiles):
+            for i in range(len(grille_affiche)):
+                for j in range(len(grille_affiche[0])):
                     k, l = convert_indice_click(i, j)
-                    fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i}_{j}")
+                    fltk.image(k, l, "fichiers fournis/tuiles/" + grille_affiche[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille_affiche[i][j] + f"_{i}_{j}")
     fltk.mise_a_jour()
     
