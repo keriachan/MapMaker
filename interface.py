@@ -30,8 +30,8 @@ def efface_grille_displayed(grille):
                 fltk.efface(grille[i][j] + f"_{i}_{j}")
                 
 def decale_grille(grille: list[list[str]], dy: int, dx: int):
-    for i in range(max(0, dy), min(len(grille), NB_CASES + dy)):
-        for j in range(max(0, dx), min(len(grille[0]), NB_CASES + dx)):
+    for i in range(dy, NB_CASES + dy):
+        for j in range(dx, NB_CASES + dx):
             if 0 <= i < len(grille) and 0 <= j < len(grille[0]) and grille[i][j] is not None: # peut etre faire un exept pour eviter une erreur out of ranges
                 k, l = convert_indice_click(i - dy, j - dx)
                 fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i - dy}_{j - dx}")
@@ -39,9 +39,9 @@ def decale_grille(grille: list[list[str]], dy: int, dx: int):
 def display_grille(grille, dy, dx):
     """ i, j est le coin supérieur gauche de la grille a afficher """
     grille_temp = []
-    for i in range(max(0, dy), min(len(grille), NB_CASES + dy)):
+    for i in range(dy, NB_CASES + dy):
         ligne_temp = []
-        for j in range(max(0, dx), min(len(grille[0]), NB_CASES + dx)):
+        for j in range(dx, NB_CASES + dx):
             if 0 <= i < len(grille) and 0 <= j < len(grille[0]):
                 ligne_temp.append(grille[i][j])
         grille_temp.append(ligne_temp)
