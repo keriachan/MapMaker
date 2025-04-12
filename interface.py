@@ -26,13 +26,13 @@ def champs_possibilites(tuiles_possibles_alea):
 def efface_grille_displayed(grille):
     for i in range(NB_CASES):
         for j in range(NB_CASES):
-            if grille[i][j] is not None:
+            if 0 <= i < len(grille) and 0 <= j < len(grille[0]) and grille[i][j] is not None:
                 fltk.efface(grille[i][j] + f"_{i}_{j}")
                 
 def decale_grille(grille: list[list[str]], dy: int, dx: int):
     for i in range(dy, NB_CASES + dy):
         for j in range(dx, NB_CASES + dx):
-            if grille[i][j] is not None: # peut etre faire un exept pour eviter une erreur out of range
+            if 0 <= i < len(grille) and 0 <= j < len(grille[0]) and grille[i][j] is not None: # peut etre faire un exept pour eviter une erreur out of ranges
                 k, l = convert_indice_click(i - dy, j - dx)
                 fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i - dy}_{j - dx}")
        
@@ -42,7 +42,8 @@ def display_grille(grille, i, j):
     for k in range(i, NB_CASES + i):
         ligne_temp = []
         for l in range(j, NB_CASES + j):
-            ligne_temp.append(grille[k][l])
+            if 0 <= k < len(grille) and 0 <= l < len(grille[0]):
+                ligne_temp.append(grille[k][l])
         grille_temp.append(ligne_temp)
     return grille_temp
  
