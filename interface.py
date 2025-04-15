@@ -102,12 +102,15 @@ while True:
             touche = fltk.touche(ev)
             if touche == "p":#profondeur
                 generation_forced = True
+                generation = True
                 generator = solver.solver_profondeur
             elif touche == "l":#largeur trop lent
                 generation_forced = True
+                generation = True
                 generator = solver.solver_largeur
             elif touche == "c":#contrainte
                 generation_forced = True
+                generation = True
                 generator = solver.solver_profondeur_contrainte
             elif touche == "e":#efface
                 efface_grille_displayed(grille_affiche)
