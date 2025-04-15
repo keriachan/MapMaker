@@ -123,10 +123,11 @@ while True:
                     for j in range(dx, NB_CASES + dx):
                         if i == dy or i == dy + NB_CASES - 1 or j == dx or j == dx + NB_CASES - 1:
                             k, l = convert_indice_click(i, j)
-                            if grille_global[i][j] is not None:
-                                fltk.efface(grille_global[i][j] + f"_{i-dy}_{j-dx}")
-                            grille_global[i][j] = "SSSS"
-                            fltk.image(k, l, "fichiers fournis/tuiles/" + grille_global[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille_global[i][j] + f"_{i}_{j}")
+                            if grille_global[i][j] != "SSSS" and gestion_tuiles.emplacement_valide(grille_global, i, j, "SSSS"):
+                                if grille_global[i][j] is not None:
+                                    fltk.efface(grille_global[i][j] + f"_{i-dy}_{j-dx}")
+                                grille_global[i][j] = "SSSS"
+                                fltk.image(k, l, "fichiers fournis/tuiles/" + grille_global[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille_global[i][j] + f"_{i}_{j}")
             #MOVEMENT
             if touche == "z":  # haut
                 if generation_forced:
