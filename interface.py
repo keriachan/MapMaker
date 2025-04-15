@@ -9,7 +9,7 @@ def convert_click_indice(x, y):#pour 10x10
     return int(y//(HEIGHT/NB_CASES)), int(x//(WIDTH/NB_CASES))
 
 def convert_indice_click(i, j):#pour 10x10
-    return int(j*(HEIGHT/NB_CASES)), int(i*(WIDTH/NB_CASES))
+    return int(j*(WIDTH/NB_CASES)), int(i*(HEIGHT/NB_CASES))
 
 def champs_possibilites(tuiles_possibles_alea):
     fltk.rectangle(MARGIN, MARGIN, WIDTH - MARGIN, HEIGHT - MARGIN, "black", "white", 2, "choices_display")
@@ -29,15 +29,16 @@ def efface_grille_displayed(grille):
             if 0 <= i < len(grille) and 0 <= j < len(grille[0]) and grille[i][j] is not None:
                 fltk.efface(grille[i][j] + f"_{i}_{j}")
                 
-def decale_grille(grille: list[list[str]], dy: int, dx: int):
-    for i in range(dy, NB_CASES + dy):
-        for j in range(dx, NB_CASES + dx):
+def display_grille(grille: list[list[str]]):
+    for i in range(NB_CASES):
+        for j in range(NB_CASES):
             if 0 <= i < len(grille) and 0 <= j < len(grille[0]) and grille[i][j] is not None: # peut etre faire un exept pour eviter une erreur out of ranges
-                k, l = convert_indice_click(i - dy, j - dx)
-                fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i - dy}_{j - dx}")
+                k, l = convert_indice_click(i, j)
+                fltk.image(k, l, "fichiers fournis/tuiles/" + grille[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille[i][j] + f"_{i}_{j}")
+
        
-def display_grille(grille, dy, dx):
-    """ i, j est le coin supérieur gauche de la grille a afficher """
+def decale_grille_displayed(grille, dy, dx):
+    """ dy, dx est le coin supérieur gauche de la grille a afficher """
     grille_temp = []
     for i in range(dy, NB_CASES + dy):
         ligne_temp = []
@@ -60,7 +61,7 @@ generation_forced = False
 while True:
     ev = fltk.donne_ev()
     if ev is not None:
-        grille_affiche = display_grille(grille_global, dy, dx)
+        grille_affiche = decale_grille_displayed(grille_global, dy, dx)
         if fltk.type_ev(ev) == "Quitte":
             break
         elif fltk.type_ev(ev) == "ClicGauche":
@@ -120,44 +121,43 @@ while True:
                 if generation_forced:
                     generation = True
                 efface_grille_displayed(grille_affiche)
-                grille_global = [[None] * NB_CASES] + grille_global if dy == 0 else grille_global
+                grille_global = [[None] * len(grille_global[0])] + grille_global if dy == 0 else grille_global
                 dy = dy-1 if dy > 0 else 0
-                decale_grille(grille_global, dy, dx)
+                grille_affiche = decale_grille_displayed(grille_global, dy, dx)
+                display_grille(grille_affiche)
             elif touche == "s":  # bas
                 if generation_forced:
                     generation = True
                 efface_grille_displayed(grille_affiche)
-                grille_global = grille_global + [[None] * NB_CASES] if dy == len(grille_global) - NB_CASES else grille_global
+                grille_global = grille_global + [[None] * len(grille_global[0])] if dy == len(grille_global) - NB_CASES else grille_global
                 dy += 1
-                decale_grille(grille_global, dy, dx)
+                grille_affiche = decale_grille_displayed(grille_global, dy, dx)
+                display_grille(grille_affiche)
             elif touche == "q":  # gauche
                 if generation_forced:
                     generation = True
                 efface_grille_displayed(grille_affiche)
                 if dx == 0:
-                    grille_temp = []
                     for i in range(len(grille_global)):
-                        grille_temp.append([None] + grille_global[i])
-                    grille_global = grille_temp
+                        grille_global[i] = [None] + grille_global[i]
                 dx = dx-1 if dx > 0 else 0
-                decale_grille(grille_global, dy, dx)
+                grille_affiche = decale_grille_displayed(grille_global, dy, dx)
+                display_grille(grille_affiche)
             elif touche == "d":  # droite
                 if generation_forced:
                     generation = True
                 efface_grille_displayed(grille_affiche)
-                if dx == len(grille_global[0]) - NB_CASES:
-                    grille_temp = []
+                if dx >= len(grille_global[0]) - NB_CASES:
                     for i in range(len(grille_global)):
-                        grille_temp.append(grille_global[i] + [None])
-                    grille_global = grille_temp
+                        grille_global[i] = grille_global[i] + [None]
                 dx += 1
-                decale_grille(grille_global, dy, dx)
+                grille_affiche = decale_grille_displayed(grille_global, dy, dx)
+                display_grille(grille_affiche)
     
     #generation infini
     if generation and generation_forced:
         generation = False
         print(f"{generator.__name__} en cours...")
-        grille_affiche = display_grille(grille_global, dy, dx)
         if generator(grille_affiche, tuiles):
             for i in range(len(grille_affiche)):
                 for j in range(len(grille_affiche[0])):
