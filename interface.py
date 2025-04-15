@@ -104,14 +104,17 @@ while True:
                 generation_forced = True
                 generation = True
                 generator = solver.solver_profondeur
+                print(f"{generator.__name__} en cours...")
             elif touche == "l":#largeur trop lent
                 generation_forced = True
                 generation = True
                 generator = solver.solver_largeur
+                print(f"{generator.__name__} en cours...")
             elif touche == "c":#contrainte
                 generation_forced = True
                 generation = True
                 generator = solver.solver_profondeur_contrainte
+                print(f"{generator.__name__} en cours...")
             elif touche == "e":#efface
                 efface_grille_displayed(grille_affiche)
                 grille_global = [[None] * NB_CASES for _ in range(NB_CASES)]
@@ -169,7 +172,6 @@ while True:
     #generation infini
     if generation and generation_forced:
         generation = False
-        print(f"{generator.__name__} en cours...")
         if generator(grille_affiche, tuiles):
             for i in range(len(grille_affiche)):
                 for j in range(len(grille_affiche[0])):
