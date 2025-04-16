@@ -57,6 +57,7 @@ tuiles = reader.cree_dico("fichiers fournis/tuiles/")
 choix = False
 generation = True
 generation_forced = False
+riviere = False
 
 while True:
     ev = fltk.donne_ev()
@@ -131,6 +132,10 @@ while True:
                                     fltk.efface(grille_global[i][j] + f"_{i-dy}_{j-dx}")
                                 grille_global[i][j] = "SSSS"
                                 fltk.image(k, l, "fichiers fournis/tuiles/" + grille_global[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille_global[i][j] + f"_{i}_{j}")
+            elif touche == "r":
+                riviere = not riviere
+                print(f"Contraitne riviere : {riviere}")
+            
             #MOVEMENT
             if touche == "z":  # haut
                 if generation_forced:
@@ -172,7 +177,7 @@ while True:
     #generation infini
     if generation and generation_forced:
         generation = False
-        if generator(grille_affiche, tuiles):
+        if generator(grille_affiche, tuiles, riviere):
             for i in range(len(grille_affiche)):
                 for j in range(len(grille_affiche[0])):
                     if grille_global[i + dy][j + dx] is None:

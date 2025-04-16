@@ -2,7 +2,7 @@
 
 
 
-def rivieres(grille,i,j, nom_tuile, h = {}):
+def rivieres_test(grille,i,j, nom_tuile, h = {}):
     for k in range(len(nom_tuile)):
         if nom_tuile[k] == "R":
             break
@@ -22,9 +22,9 @@ def rivieres(grille,i,j, nom_tuile, h = {}):
             if nom_tuile[l] == "R":
                     if grille[x][y] is not None:
                         h[(x,y)] = l
-                        t_true[l] == rivieres(grille,x,y, grille[x][y], h = h)
+                        t_true[l] == rivieres_test(grille,x,y, grille[x][y], h = h)
     
-def emplacement_valide(grille: list[list[str]], i: int, j: int, nom_tuile: str):
+def emplacement_valide(grille: list[list[str]], i: int, j: int, nom_tuile: str, riviere: bool = False) -> bool:
     direction = [(-1, 0), (0, 1), (1, 0), (0, -1)]
     error = 0
     for l, (dx, dy) in enumerate(direction):
@@ -39,56 +39,59 @@ def emplacement_valide(grille: list[list[str]], i: int, j: int, nom_tuile: str):
     if error == 4:
         return False
     
-    #if not riviere_valide(grille, i, j, nom_tuile):
-    #   return False   
+    if riviere:
+        return riviere_valide(grille, i, j, nom_tuile)   
     return True
 
 def riviere_valide(grille, i, j, nom_tuile):
-    debut, fin = None, None
     if not "R" in nom_tuile:
         return True
+    cote = []
+    visite = {(i, j)}
     direction = [(-1, 0), (0, 1), (1, 0), (0, -1)]
     indices_R = [k for k, c in enumerate(nom_tuile) if c == 'R']
+    if "M" in nom_tuile:
+            cote.append("M")
+    for c in nom_tuile: #Mer/bord
+        if c in ["S", "D", "H", "G", "B"]:
+            cote.append("S")
     for k in range(len(indices_R)):
         dx, dy = direction[indices_R[k]]
         x, y = i + dx, j + dy
-        if 0 <= x < len(grille) and 0 <= y < len(grille[0]):
-            if k == 0:
-                debut, visite = parcours_riviere(grille, x, y, {(i, j)}, (dx, dy))
-            else:
-                fin, visite = parcours_riviere(grille, x, y, visite, (dx, dy))
-        else:
-            return True
-    print(debut, fin)
-    if (debut is False or fin is False) or (debut != "vide" and debut == fin):
+        cote_temp, visite = parcours_riviere(grille, x, y, visite)
+        cote.append(cote_temp)
+    if False in cote or len(cote) != len(set(cote)):
         return False
     return True
+            
+    
 
-def parcours_riviere(grille, i, j, visite, vect) -> tuple[str, set]:
-    #boucle
-    if (i, j) in visite:
+def parcours_riviere(grille, i, j, visite) -> tuple[str, set]:
+    if (i, j) in visite: #boucle ou retour en arriere
         return False, visite
     visite.add((i, j))
-    if grille[i][j] is None:
+    
+    if i < 0 or i >= len(grille) or j < 0 or j >= len(grille[0]) or grille[i][j] is None: #hors map ou pas de tuile
         return "vide", visite
+    
+    elif "M" in  grille[i][j]: #Montagne
+        return "M", visite
+    
+    for c in grille[i][j]: #Mer/bord
+        if c in ["S", "D", "H", "G", "B"]:
+            return "S", visite
+    
     direction = [(-1, 0), (0, 1), (1, 0), (0, -1)]
     indices_R = [k for k, c in enumerate(grille[i][j]) if c == 'R']
     for k in range(len(indices_R)):
         dx, dy = direction[indices_R[k]]
         x, y = i + dx, j + dy
-        if 0 <= x < len(grille) and 0 <= y < len(grille[0]):
-            if (dx, dy) == (vect[0] * -1, vect[1] * -1):#opposé
-                continue
-            #vide ou riviere
-            if grille[x][y] is None or grille[x][y][(indices_R[k]+2)%4] == "R":
-                return parcours_riviere(grille, x, y, visite)
-            #montagne ou mer
-            elif grille[x][y][(indices_R[k]+2)%4] == "M" or grille[x][y][(indices_R[k]+2)%4] == "S":
-                return grille[x][y][(indices_R[k]+2)%4], visite
-            else:
-                return False, visite
+        cote, visite = parcours_riviere(grille, x, y, visite)
+        if cote is False:
+            continue
         else:
-            return "vide", visite
-    
-def tuiles_possibles(tuiles: list[dict], grille: list[list[str]], i: int, j: int):
-    return [tuile for tuile in tuiles if emplacement_valide(grille, i, j, tuile["nom"])]
+            return cote, visite
+        
+
+def tuiles_possibles(tuiles: list[dict], grille: list[list[str]], i: int, j: int, riviere: bool = False) -> list[dict]:
+    return [tuile for tuile in tuiles if emplacement_valide(grille, i, j, tuile["nom"], riviere)]
