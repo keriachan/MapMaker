@@ -54,6 +54,13 @@ def efface_2():
     fltk.efface_tout()
     fltk.rectangle(0, 0, WIDTH, HEIGHT, remplissage="lightgrey", tag="background")
 
+def scroll_bar(taille, decale):
+    max_height = HEIGHT - 2 * MARGIN
+    bar_height = max_height * min(1, 25 / taille)
+    y1 = MARGIN + (decale / max(1, taille - 25)) * (max_height - bar_height)
+    y2 = y1 + bar_height
+    fltk.rectangle(WIDTH - MARGIN - 12, y1, WIDTH - MARGIN - 2, y2, "black", "grey", 1, "scroll_bar")
+    
 fltk.cree_fenetre(WIDTH, HEIGHT)
 fltk.rectangle(0, 0, WIDTH, HEIGHT, remplissage="lightgrey", tag="background")
 
@@ -85,6 +92,7 @@ while True:
                     print("Pas de tuiles possibles")
                     continue
                 champs_possibilites(tuiles_possibles)
+                scroll_bar(len(tuiles_possibles), decale)
                 choix = True
             else:
                 i, j = convert_click_indice(k, l)
@@ -93,6 +101,7 @@ while True:
                         if fltk.est_objet_survole(tuile["nom"]):
                             choix = False
                             fltk.efface("choices_display")
+                            fltk.efface("scroll_bar")
                             for tuile_bis in tuiles_possibles_affiche:
                                 fltk.efface(tuile_bis["nom"])
                             grille_global[i+dy][j+dx] = tuile["nom"]
@@ -206,18 +215,22 @@ while True:
                     if len(tuiles_possibles) > 25:
                         decale = decale + 1 if decale < len(tuiles_possibles) - 25 else decale
                         fltk.efface("choices_display")
+                        fltk.efface("scroll_bar")
                         for tuile in tuiles_possibles_affiche:
                                 fltk.efface(tuile["nom"])
                         tuiles_possibles_affiche = tuiles_possibles[decale:25+decale]
                         champs_possibilites(tuiles_possibles_affiche)
+                        scroll_bar(len(tuiles_possibles), decale)
                 elif touche == "Up":
                     if len(tuiles_possibles) > 25:
                         decale = decale - 1 if decale > 0 else 0
                         fltk.efface("choices_display")
+                        fltk.efface("scroll_bar")
                         for tuile in tuiles_possibles_affiche:
                                 fltk.efface(tuile["nom"])
                         tuiles_possibles_affiche = tuiles_possibles[decale:25+decale]
                         champs_possibilites(tuiles_possibles_affiche)
+                        scroll_bar(len(tuiles_possibles), decale)
                 
     #generation infini
     if generation and generation_forced:
