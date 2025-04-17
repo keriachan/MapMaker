@@ -1,9 +1,10 @@
 from modules import fltk, gestion_tuiles, reader, solver
 import random
 
+
 WIDTH, HEIGHT = 800, 800
 MARGIN = WIDTH//5
-NB_CASES = 10
+NB_CASES = 10 
 
 def convert_click_indice(x, y):#pour 10x10
     return int(y//(HEIGHT/NB_CASES)), int(x//(WIDTH/NB_CASES))
@@ -45,6 +46,8 @@ def decale_grille_displayed(grille, dy, dx):
         for j in range(dx, NB_CASES + dx):
             if 0 <= i < len(grille) and 0 <= j < len(grille[0]):
                 ligne_temp.append(grille[i][j])
+            else:
+                ligne_temp.append(None)
         grille_temp.append(ligne_temp)
     return grille_temp
  
@@ -135,6 +138,28 @@ while True:
             elif touche == "r":
                 riviere = not riviere
                 print(f"Contraitne riviere : {riviere}")
+            elif touche == "f": #Zoom in / il faut verifier si autour de la ou on veux afficher y a des tuiles
+                generation_forced = False
+                x, y = fltk.abscisse_souris(), fltk.ordonnee_souris()
+                i, j = convert_click_indice(x, y)
+                #efface_grille_displayed(grille_affiche)
+                fltk.efface_tout()
+                fltk.rectangle(0, 0, WIDTH, HEIGHT, remplissage="lightgrey", tag="background")
+                NB_CASES = NB_CASES - 2 if NB_CASES > 2 else NB_CASES
+                dx, dy = dx + j - NB_CASES//2, dy + i - NB_CASES//2
+                grille_affiche = decale_grille_displayed(grille_global, dy, dx)
+                display_grille(grille_affiche)
+            elif touche == "g": #Zoom out
+                generation_forced = False
+                x, y = fltk.abscisse_souris(), fltk.ordonnee_souris()
+                i, j = convert_click_indice(x, y)
+                #efface_grille_displayed(grille_affiche)
+                fltk.efface_tout()
+                fltk.rectangle(0, 0, WIDTH, HEIGHT, remplissage="lightgrey", tag="background")
+                NB_CASES = NB_CASES + 2 if NB_CASES <= 20 and NB_CASES <= len(grille_global) - 2 else NB_CASES
+                dx, dy = dx + j - NB_CASES//2, dy + i - NB_CASES//2
+                grille_affiche = decale_grille_displayed(grille_global, dy, dx)
+                display_grille(grille_affiche)
             
             #MOVEMENT
             if touche == "z":  # haut
