@@ -75,7 +75,7 @@ while True:
                 k, l = convert_indice_click(i, j)
                 if grille_affiche[i][j] is not None:
                     continue
-                tuiles_possibles = gestion_tuiles.tuiles_possibles(tuiles, grille_affiche, i, j)
+                tuiles_possibles = gestion_tuiles.tuiles_possibles(tuiles, grille_affiche, i, j, riviere)
                 if len(tuiles_possibles) == 0:
                     print("Pas de tuiles possibles")
                     continue
@@ -120,7 +120,8 @@ while True:
                 generator = solver.solver_profondeur_contrainte
                 print(f"{generator.__name__} en cours...")
             elif touche == "e":#efface
-                efface_grille_displayed(grille_affiche)
+                fltk.efface_tout()
+                fltk.rectangle(0, 0, WIDTH, HEIGHT, remplissage="lightgrey", tag="background")
                 grille_global = [[None] * NB_CASES for _ in range(NB_CASES)]
                 dx, dy = 0, 0
             elif touche == "a": #arrete la generation
