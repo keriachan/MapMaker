@@ -1,5 +1,5 @@
 from modules import fltk, gestion_tuiles, reader, solver
-import random
+import random, copy
 
 
 WIDTH, HEIGHT = 800, 800
@@ -235,6 +235,7 @@ while True:
     #generation infini
     if generation and generation_forced:
         generation = False
+        grille_temp = copy.deepcopy(grille_affiche)
         if generator(grille_affiche, tuiles, riviere):
             for i in range(len(grille_affiche)):
                 for j in range(len(grille_affiche[0])):
@@ -243,6 +244,7 @@ while True:
                     k, l = convert_indice_click(i, j)
                     fltk.image(k, l, "fichiers fournis/tuiles/" + grille_affiche[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille_affiche[i][j] + f"_{i}_{j}")
         else:
+            grille_affiche = copy.deepcopy(grille_temp)
             print("Pas de solution")
     fltk.mise_a_jour()
     
