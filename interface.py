@@ -210,5 +210,7 @@ while True:
                         grille_global[i + dy][j + dx] = grille_affiche[i][j]
                     k, l = convert_indice_click(i, j)
                     fltk.image(k, l, "fichiers fournis/tuiles/" + grille_affiche[i][j] + ".png", WIDTH//NB_CASES, HEIGHT//NB_CASES, "nw", grille_affiche[i][j] + f"_{i}_{j}")
+        else:
+            print("Pas de solution")
     fltk.mise_a_jour()
     

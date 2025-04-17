@@ -47,7 +47,7 @@ def solver_profondeur(grille: list[list[str]], tuiles: list[dict], riviere=False
                 random.shuffle(tuiles_possibles)
                 for tuile in tuiles_possibles:
                     grille[i][j] = tuile["nom"]
-                    if solver_profondeur(grille, tuiles):
+                    if solver_profondeur(grille, tuiles, riviere):
                         return True
                     grille[i][j] = None
     return False
