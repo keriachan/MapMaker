@@ -4,13 +4,34 @@ from collections import deque
 import copy
 
 def grille_remplie(grille: list[list[str]]):
+    """Determine si la grille est remplie ou non.
+
+    Args:
+        grille (list[list[str]]): grille de jeu
+
+    Returns:
+        bool: True si la grille est remplie, False sinon
+    """
     for ligne in grille:
         for tuile in ligne:
             if tuile is None:
                 return False
     return True
 
-def tuile_possibilitees(tuiles: list[dict], grille: list[list[str]], liste_possibilitees: list, x, y, riviere = False) -> tuple | None:
+def tuile_possibilitees(tuiles: list[dict], grille: list[list[str]], liste_possibilitees: list, x, y, riviere = False):
+    """Renvoie la liste des tuiles possibles pour chaque case de la grille qui a changé (son voisin a été modifié). Trié par ordre croissant de la taille de la liste des tuiles possibles.
+
+    Args:
+        tuiles (list[dict]): liste de toutes les tuiles disponibles
+        grille (list[list[str]]): grille de jeu
+        liste_possibilitees (list): liste des possibilitees de tuiles pour chaque case de la grille
+        x (int): ordonnee de la tuile à placer
+        y (int): abscisse de la tuile à placer
+        riviere (bool, optional): contrainte de riviere activé ou non
+
+    Returns:
+        list: liste des possibilitees de tuiles pour chaque case de la grille triée par ordre croissant de la taille de la liste des tuiles possibles
+    """
     #premiere iteration
     if liste_possibilitees is None:
         liste_possibilitees = []
@@ -23,8 +44,8 @@ def tuile_possibilitees(tuiles: list[dict], grille: list[list[str]], liste_possi
     else:
         direction = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         for dx, dy in direction:
-            i = x + dx
-            j = y + dy
+            i = y + dy
+            j = x + dx
             if 0 <= i < len(grille) and 0 <= j < len(grille[0]) and grille[i][j] is None:
                 for tuile in liste_possibilitees:
                     if tuile["coord"] == (i, j):
@@ -33,9 +54,20 @@ def tuile_possibilitees(tuiles: list[dict], grille: list[list[str]], liste_possi
     return sorted(liste_possibilitees, key=lambda x: len(x["possibilitees"]))
 
 def grille_tuple(grille: list[list[str]]) -> tuple:
+    """transforme la grille en tuple pour pouvoir l'utiliser dans un set."""
     return tuple(tuple(tuiles) for tuiles in grille)
 
 def solver_profondeur(grille: list[list[str]], tuiles: list[dict], riviere=False) -> bool:
+    """Utilise la méthode de backtracking basique pour résoudre la grille.
+
+    Args:
+        grille (list[list[str]]): grille de jeu
+        tuiles (list[dict]): liste de toutes les tuiles disponibles
+        riviere (bool, optional): contrainte de riviere activé ou non
+
+    Returns:
+        bool: True si la grille est résolue, False sinon
+    """
     if grille_remplie(grille):
         return True
     for i in range(len(grille)):
@@ -53,6 +85,19 @@ def solver_profondeur(grille: list[list[str]], tuiles: list[dict], riviere=False
     return False
 
 def solver_profondeur_contrainte(grille: list[list[str]], tuiles: list[dict], riviere = False, liste_possibilitees=None, x=None, y=None) -> bool:
+    """Utilise la méthode de backtracking avec des contraintes pour résoudre la grille de maniere plus efficace.
+
+    Args:
+        grille (list[list[str]]): grille de jeu
+        tuiles (list[dict]): liste de toutes les tuiles disponibles
+        riviere (bool, optional): contrainte de riviere activé ou non. Defaults to False.
+        liste_possibilitees (_type_, optional):  liste des possibilitees de tuiles pour chaque case de la grille
+        x (_type_, optional): ordonnee de la tuile qui vient d'etre placee
+        y (_type_, optional): abscisse de la tuile qui vient d'etre placee
+
+    Returns:
+        bool: True si la grille est résolue, False sinon
+    """
     #cas de base
     if grille_remplie(grille):
         return True
@@ -75,9 +120,8 @@ def solver_profondeur_contrainte(grille: list[list[str]], tuiles: list[dict], ri
         grille[i][j] = None
     return False
 
-
-#trop de possibilitees, pas efficace dutout
 def solver_largeur(grille: list[list[str]], tuiles: list[dict], riviere=False) -> bool:
+    """solver de la grille en largeur. Pas efficace du tout."""
     queue = deque()
     queue.appendleft(copy.deepcopy(grille)) #premier élément de la queue
     visite = set()
