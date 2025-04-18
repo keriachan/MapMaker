@@ -60,6 +60,32 @@ def scroll_bar(taille, decale):
     y1 = MARGIN + (decale / max(1, taille - 25)) * (max_height - bar_height)
     y2 = y1 + bar_height
     fltk.rectangle(WIDTH - MARGIN - 12, y1, WIDTH - MARGIN - 2, y2, "black", "grey", 1, "scroll_bar")
+
+def affiche_menu():
+    fltk.rectangle(MARGIN, MARGIN//10, WIDTH - MARGIN, MARGIN//10 + HEIGHT//8, "black", "white", 1, "menu")
+    fltk.texte(WIDTH//2, MARGIN//10 + HEIGHT//16, "MENU", "black", "white", "center",taille=50, tag="menu")
+    
+    #fltk.rectangle(MARGIN//10, MARGIN*2//10 + HEIGHT//8, WIDTH//2 - MARGIN//20, HEIGHT - MARGIN//10, "black", "white", 1, "menu")#fond new map
+    #fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*2//10 + HEIGHT//8, WIDTH - MARGIN//10, HEIGHT - MARGIN//10, "black", "white", 1, "menu")#fond load map
+    
+    #new map
+    fltk.rectangle(MARGIN//10, MARGIN*2//10 + HEIGHT//8, WIDTH//2 - MARGIN//20, MARGIN*2//10 + HEIGHT*2//8, "black", "white", 1, "menu")
+    fltk.texte(WIDTH//4, MARGIN*2//10 + HEIGHT//8 + HEIGHT//16, "Nouvelle carte", "black", "white", "center", taille=30, tag="menu")
+    fltk.rectangle(MARGIN//10, MARGIN*3//10 + HEIGHT*2//8, WIDTH//2 - MARGIN//20, MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16, "black", "white", 1, "menu")
+    fltk.texte(MARGIN*2//10, MARGIN*2//10 + HEIGHT//8 + HEIGHT//16 + HEIGHT//8, "Nom de la carte :", "black", "white", "nw", taille=20, tag="menu")
+    fltk.rectangle(MARGIN//10, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16, WIDTH//2 - MARGIN//20 - WIDTH//8, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT*2//16, "black", "white", 1, "menu")
+    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8)//2, (MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + MARGIN*4//10 + HEIGHT*3//8 + HEIGHT*2//16)//2, "Largeur de la carte :", "black", "white", "center", taille=20, tag="menu")
+    fltk.rectangle(WIDTH//2 + MARGIN//20 - WIDTH//8, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16, WIDTH//2 - MARGIN//10 - WIDTH//32, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT*2//16, "black", "white", 1, "menu")
+    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8 + WIDTH//2 - MARGIN//10 - WIDTH//32)//2, (MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + MARGIN*4//10 + HEIGHT*3//8 + HEIGHT*2//16)//2, f"{NB_CASES}", "black", "white", "center", taille=20, tag="menu")
+    fltk.rectangle(WIDTH//2 - MARGIN/20 - WIDTH//32, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16, WIDTH//2 - MARGIN//20, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + HEIGHT//32 - MARGIN//40, "black", "white", 1, "menu")
+    fltk.texte((WIDTH//2 - MARGIN/20 - WIDTH//32 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + HEIGHT//32 - MARGIN//40)//2, "up", "black", "white", "center", taille=10, tag="menu")
+    fltk.rectangle(MARGIN//10,  MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16,  WIDTH//2 - MARGIN//20 - WIDTH//8,  MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*3//16, "black", "white", 1, "menu")
+    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8)//2, (MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*3//16)//2, "Hauteur de la carte :", "black", "white", "center", taille=20, tag="menu")
+    
+    #load map
+    fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*2//10 + HEIGHT//8, WIDTH - MARGIN//10, MARGIN*2//10 + HEIGHT*2//8, "black", "white", 1, "menu")
+    fltk.texte(WIDTH*3//4, MARGIN*2//10 + HEIGHT//8 + HEIGHT//16, "Charger une carte", "black", "white", "center", taille=30, tag="menu")
+    
     
 fltk.cree_fenetre(WIDTH, HEIGHT)
 fltk.rectangle(0, 0, WIDTH, HEIGHT, remplissage="lightgrey", tag="background")
@@ -72,6 +98,9 @@ generation = True
 generation_forced = False
 riviere = False
 decale = 0 #decale pour le scroll
+menu = True
+nouvelle_map = False
+charger_map = False
 
 while True:
     ev = fltk.donne_ev()
@@ -168,7 +197,7 @@ while True:
                     i, j = convert_click_indice(x, y)
                     #efface_grille_displayed(grille_affiche)
                     efface_2()
-                    NB_CASES = NB_CASES + 2 if NB_CASES <= 20 and NB_CASES <= len(grille_global) - 2 else NB_CASES
+                    NB_CASES = NB_CASES + 2 if NB_CASES <= 50 and NB_CASES <= len(grille_global) - 2 else NB_CASES
                     dx, dy = dx + j - NB_CASES//2, dy + i - NB_CASES//2
                     grille_affiche = decale_grille_displayed(grille_global, dy, dx)
                     display_grille(grille_affiche)

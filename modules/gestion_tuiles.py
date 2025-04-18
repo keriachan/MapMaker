@@ -37,8 +37,6 @@ def riviere_valide(grille, i, j, nom_tuile):
     if False in cote or len(cote) != len(set(cote)):
         return False
     return True
-            
-    
 
 def parcours_riviere(grille, i, j, visite) -> tuple[str, set]:
     if (i, j) in visite: #boucle ou retour en arriere
