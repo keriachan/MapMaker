@@ -61,6 +61,17 @@ def scroll_bar(taille, decale):
     y2 = y1 + bar_height
     fltk.rectangle(WIDTH - MARGIN - 12, y1, WIDTH - MARGIN - 2, y2, "black", "grey", 1, "scroll_bar")
 
+def position_to_decale(y, taille):
+    max_height = HEIGHT - 2 * MARGIN
+    bar_height = max_height * min(1, 25 / taille)
+    
+    # Position relative de y dans la scroll zone (0 tout en haut, 1 tout en bas)
+    y_rel = (y - MARGIN - bar_height / 2) / (max_height - bar_height)
+    y_rel = min(max(0, y_rel), 1)  # Clamp entre 0 et 1
+
+    decale = round(y_rel * max(0, taille - 25))
+    return decale
+
 def affiche_menu():
     fltk.rectangle(MARGIN, MARGIN//10, WIDTH - MARGIN, MARGIN//10 + HEIGHT//8, "black", "white", 1, "menu")
     fltk.texte(WIDTH//2, MARGIN//10 + HEIGHT//16, "MENU", "black", "white", "center",taille=50, tag="menu")
@@ -150,9 +161,20 @@ while True:
                         print("Pas de tuiles possibles")
                         continue
                     champs_possibilites(tuiles_possibles)
+                    decale = 0
                     scroll_bar(len(tuiles_possibles), decale)
                     choix = True
                 else:
+                    if  WIDTH - MARGIN - 12 <= x <= WIDTH - MARGIN - 2 and MARGIN <= y <= HEIGHT - MARGIN:
+                        if len(tuiles_possibles) > 25:
+                            decale = position_to_decale(y, len(tuiles_possibles))
+                            fltk.efface("choices_display")
+                            fltk.efface("scroll_bar")
+                            for tuile in tuiles_possibles_affiche:
+                                fltk.efface(tuile["nom"])
+                            tuiles_possibles_affiche = tuiles_possibles[decale:25+decale]
+                            champs_possibilites(tuiles_possibles_affiche)
+                            scroll_bar(len(tuiles_possibles), decale)
                     i, j = convert_click_indice(k, l)
                     if tuiles_possibles is not None:
                         for tuile in tuiles_possibles_affiche:
