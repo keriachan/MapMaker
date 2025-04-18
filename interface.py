@@ -1,5 +1,5 @@
 from modules import fltk, gestion_tuiles, reader, solver
-import random, copy
+import random, copy, string
 
 
 WIDTH, HEIGHT = 800, 800
@@ -65,15 +65,16 @@ def affiche_menu():
     fltk.rectangle(MARGIN, MARGIN//10, WIDTH - MARGIN, MARGIN//10 + HEIGHT//8, "black", "white", 1, "menu")
     fltk.texte(WIDTH//2, MARGIN//10 + HEIGHT//16, "MENU", "black", "white", "center",taille=50, tag="menu")
     
-    #fltk.rectangle(MARGIN//10, MARGIN*2//10 + HEIGHT//8, WIDTH//2 - MARGIN//20, HEIGHT - MARGIN//10, "black", "white", 1, "menu")#fond new map
-    #fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*2//10 + HEIGHT//8, WIDTH - MARGIN//10, HEIGHT - MARGIN//10, "black", "white", 1, "menu")#fond load map
-    
     #new map
     fltk.rectangle(MARGIN//10, MARGIN*2//10 + HEIGHT//8, WIDTH//2 - MARGIN//20, MARGIN*2//10 + HEIGHT*2//8, "black", "white", 1, "menu")
     fltk.texte(WIDTH//4, MARGIN*2//10 + HEIGHT//8 + HEIGHT//16, "Nouvelle carte", "black", "white", "center", taille=30, tag="menu")
     
-    fltk.rectangle(MARGIN//10, MARGIN*3//10 + HEIGHT*2//8, WIDTH//2 - MARGIN//20, MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16, "black", "white", 1, "menu")
-    fltk.texte(MARGIN*2//10, MARGIN*2//10 + HEIGHT//8 + HEIGHT//16 + HEIGHT//8, "Nom de la carte :", "black", "white", "nw", taille=20, tag="menu")
+    #nom de la carte
+    fltk.rectangle(MARGIN//10, MARGIN*3//10 + HEIGHT*2//8, WIDTH//2 - MARGIN//20, MARGIN*3//10 + HEIGHT*2//8 + HEIGHT//16, "black", "white", 1, "menu")
+    fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*3//10 + HEIGHT*2//8 + MARGIN*3//10 + HEIGHT*2//8 + HEIGHT//16)//2, "Nom de la carte :", "black", "white", "center", taille=20, tag="menu")
+    
+    fltk.rectangle(MARGIN//10, MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16, WIDTH//2 - MARGIN//20, MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16, "black", "white", 1, "nom_carte")
+    fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, "Nom de la carte", "black", "white", "center", taille=20, tag="nom_carte_texte")
     
     #largeur
     fltk.rectangle(MARGIN//10, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16, WIDTH//2 - MARGIN//20 - WIDTH//8, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT*2//16, "black", "white", 1, "menu")
@@ -120,6 +121,13 @@ fltk.cree_fenetre(WIDTH, HEIGHT)
 fltk.rectangle(0, 0, WIDTH, HEIGHT, remplissage="lightgrey", tag="background")
 affiche_menu()
 menu = True
+champ_texte = False
+nom_carte = "Nom de la carte"
+caracteres_valides = string.ascii_letters + string.digits + string.punctuation
+text_cursor = len(nom_carte)
+cursor = None
+curseur_visible = True
+temps_derniere_alternance = fltk.time()
 
 while True:
     ev = fltk.donne_ev()
@@ -158,6 +166,7 @@ while True:
                                 fltk.image(k, l, tuile["chemin"], WIDTH//NB_CASES[0], HEIGHT//NB_CASES[1], "nw", tuile["nom"] + f"_{i}_{j}")
                                 break
             else:
+                champ_texte = False
                 if fltk.est_objet_survole("up_largeur"):
                     NB_CASES[0] = NB_CASES[0] + 1 if NB_CASES[0] < 50 else NB_CASES[0]
                     fltk.efface("largeur_case")
@@ -185,7 +194,8 @@ while True:
                     generation_forced = False
                     riviere = False
                     decale = 0 #decale pour le scroll
-                     
+                elif fltk.est_objet_survole("nom_carte"):
+                    champ_texte = True
                     
         elif fltk.type_ev(ev) == "ClicDroit":
             x, y = fltk.abscisse(ev), fltk.ordonnee(ev)
@@ -197,120 +207,161 @@ while True:
                         grille_global[i+dy][j+dx] = None
         elif fltk.type_ev(ev) == "Touche":
             touche = fltk.touche(ev)
-            if not choix:
-                if touche == "p":#profondeur
-                    generation_forced = True
-                    generation = True
-                    generator = solver.solver_profondeur
-                    print(f"{generator.__name__} en cours...")
-                elif touche == "l":#largeur trop lent
-                    generation_forced = True
-                    generation = True
-                    generator = solver.solver_largeur
-                    print(f"{generator.__name__} en cours...")
-                elif touche == "c":#contrainte
-                    generation_forced = True
-                    generation = True
-                    generator = solver.solver_profondeur_contrainte
-                    print(f"{generator.__name__} en cours...")
-                elif touche == "e":#efface
-                    efface_2()
-                    grille_global = [[None] * NB_CASES[0] for _ in range(NB_CASES[1])]
-                    dx, dy = 0, 0
-                elif touche == "a": #arrete la generation
-                    generation_forced = False
-                elif touche == "m": #mer sur le bord de la grille
-                    for i in range(dy, NB_CASES[1] + dy):
-                        for j in range(dx, NB_CASES[0] + dx):
-                            if i == dy or i == dy + NB_CASES[1] - 1 or j == dx or j == dx + NB_CASES[0] - 1:
-                                k, l = convert_indice_click(i, j)
-                                if grille_global[i][j] != "SSSS" and gestion_tuiles.emplacement_valide(grille_global, i, j, "SSSS"):
-                                    if grille_global[i][j] is not None:
-                                        fltk.efface(grille_global[i][j] + f"_{i-dy}_{j-dx}")
-                                    grille_global[i][j] = "SSSS"
-                                    fltk.image(k, l, "fichiers fournis/tuiles/" + grille_global[i][j] + ".png", WIDTH//NB_CASES[0], HEIGHT//NB_CASES[1], "nw", grille_global[i][j] + f"_{i}_{j}")
-                elif touche == "r":
-                    riviere = not riviere
-                    print(f"Contraitne riviere : {riviere}")
-                elif touche == "f": #Zoom in / il faut verifier si autour de la ou on veux afficher y a des tuiles
-                    generation_forced = False
-                    x, y = fltk.abscisse_souris(), fltk.ordonnee_souris()
-                    i, j = convert_click_indice(x, y)
-                    efface_2()
-                    NB_CASES = [e - 2 if e > 2 else e for e in NB_CASES] if sum(e > 2 for e in NB_CASES) != 1 else NB_CASES# peut etre faux
-                    dx, dy = dx + j - NB_CASES[0]//2, dy + i - NB_CASES[1]//2
-                    grille_affiche = decale_grille_displayed(grille_global, dy, dx)
-                    display_grille(grille_affiche)
-                elif touche == "g": #Zoom out
-                    generation_forced = False
-                    x, y = fltk.abscisse_souris(), fltk.ordonnee_souris()
-                    i, j = convert_click_indice(x, y)
-                    #efface_grille_displayed(grille_affiche)
-                    efface_2()
-                    NB_CASES = [e + 2 if e <= 50 and e <= len(grille_global) - 2 else e for e in NB_CASES] if sum(e <= 50 and e <= len(grille_global) - 2 for e in NB_CASES) != 1 else NB_CASES # peut etre faux
-                    dx, dy = dx + j - NB_CASES[0]//2, dy + i - NB_CASES[1]//2
-                    grille_affiche = decale_grille_displayed(grille_global, dy, dx)
-                    display_grille(grille_affiche)
-                
-                #MOVEMENT
-                if touche == "z":  # haut
-                    if generation_forced:
+            if not menu:
+                if not choix:
+                    if touche == "p":#profondeur
+                        generation_forced = True
                         generation = True
-                    efface_2()
-                    grille_global = [[None] * len(grille_global[0])] + grille_global if dy == 0 else grille_global
-                    dy = dy-1 if dy > 0 else 0
-                    grille_affiche = decale_grille_displayed(grille_global, dy, dx)
-                    display_grille(grille_affiche)
-                elif touche == "s":  # bas
-                    if generation_forced:
+                        generator = solver.solver_profondeur
+                        print(f"{generator.__name__} en cours...")
+                    elif touche == "l":#largeur trop lent
+                        generation_forced = True
                         generation = True
-                    efface_2()
-                    grille_global = grille_global + [[None] * len(grille_global[0])] if dy == len(grille_global) - NB_CASES[1] else grille_global
-                    dy += 1
-                    grille_affiche = decale_grille_displayed(grille_global, dy, dx)
-                    display_grille(grille_affiche)
-                elif touche == "q":  # gauche
-                    if generation_forced:
+                        generator = solver.solver_largeur
+                        print(f"{generator.__name__} en cours...")
+                    elif touche == "c":#contrainte
+                        generation_forced = True
                         generation = True
-                    efface_2()
-                    if dx == 0:
-                        for i in range(len(grille_global)):
-                            grille_global[i] = [None] + grille_global[i]
-                    dx = dx-1 if dx > 0 else 0
-                    grille_affiche = decale_grille_displayed(grille_global, dy, dx)
-                    display_grille(grille_affiche)
-                elif touche == "d":  # droite
-                    if generation_forced:
-                        generation = True
-                    efface_2()
-                    if dx >= len(grille_global[0]) - NB_CASES[0]:
-                        for i in range(len(grille_global)):
-                            grille_global[i] = grille_global[i] + [None]
-                    dx += 1
-                    grille_affiche = decale_grille_displayed(grille_global, dy, dx)
-                    display_grille(grille_affiche)
+                        generator = solver.solver_profondeur_contrainte
+                        print(f"{generator.__name__} en cours...")
+                    elif touche == "e":#efface
+                        efface_2()
+                        grille_global = [[None] * NB_CASES[0] for _ in range(NB_CASES[1])]
+                        dx, dy = 0, 0
+                    elif touche == "a": #arrete la generation
+                        generation_forced = False
+                    elif touche == "m": #mer sur le bord de la grille
+                        for i in range(dy, NB_CASES[1] + dy):
+                            for j in range(dx, NB_CASES[0] + dx):
+                                if i == dy or i == dy + NB_CASES[1] - 1 or j == dx or j == dx + NB_CASES[0] - 1:
+                                    k, l = convert_indice_click(i, j)
+                                    if grille_global[i][j] != "SSSS" and gestion_tuiles.emplacement_valide(grille_global, i, j, "SSSS"):
+                                        if grille_global[i][j] is not None:
+                                            fltk.efface(grille_global[i][j] + f"_{i-dy}_{j-dx}")
+                                        grille_global[i][j] = "SSSS"
+                                        fltk.image(k, l, "fichiers fournis/tuiles/" + grille_global[i][j] + ".png", WIDTH//NB_CASES[0], HEIGHT//NB_CASES[1], "nw", grille_global[i][j] + f"_{i}_{j}")
+                    elif touche == "r":
+                        riviere = not riviere
+                        print(f"Contraitne riviere : {riviere}")
+                    elif touche == "f": #Zoom in / il faut verifier si autour de la ou on veux afficher y a des tuiles
+                        generation_forced = False
+                        x, y = fltk.abscisse_souris(), fltk.ordonnee_souris()
+                        i, j = convert_click_indice(x, y)
+                        efface_2()
+                        NB_CASES = [e - 2 if e > 2 else e for e in NB_CASES] if sum(e > 2 for e in NB_CASES) != 1 else NB_CASES# peut etre faux
+                        dx, dy = dx + j - NB_CASES[0]//2, dy + i - NB_CASES[1]//2
+                        grille_affiche = decale_grille_displayed(grille_global, dy, dx)
+                        display_grille(grille_affiche)
+                    elif touche == "g": #Zoom out
+                        generation_forced = False
+                        x, y = fltk.abscisse_souris(), fltk.ordonnee_souris()
+                        i, j = convert_click_indice(x, y)
+                        #efface_grille_displayed(grille_affiche)
+                        efface_2()
+                        NB_CASES = [e + 2 if e <= 50 and e <= len(grille_global) - 2 else e for e in NB_CASES] if sum(e <= 50 and e <= len(grille_global) - 2 for e in NB_CASES) != 1 else NB_CASES # peut etre faux
+                        dx, dy = dx + j - NB_CASES[0]//2, dy + i - NB_CASES[1]//2
+                        grille_affiche = decale_grille_displayed(grille_global, dy, dx)
+                        display_grille(grille_affiche)
+                    
+                    #MOVEMENT
+                    if touche == "z":  # haut
+                        if generation_forced:
+                            generation = True
+                        efface_2()
+                        grille_global = [[None] * len(grille_global[0])] + grille_global if dy == 0 else grille_global
+                        dy = dy-1 if dy > 0 else 0
+                        grille_affiche = decale_grille_displayed(grille_global, dy, dx)
+                        display_grille(grille_affiche)
+                    elif touche == "s":  # bas
+                        if generation_forced:
+                            generation = True
+                        efface_2()
+                        grille_global = grille_global + [[None] * len(grille_global[0])] if dy == len(grille_global) - NB_CASES[1] else grille_global
+                        dy += 1
+                        grille_affiche = decale_grille_displayed(grille_global, dy, dx)
+                        display_grille(grille_affiche)
+                    elif touche == "q":  # gauche
+                        if generation_forced:
+                            generation = True
+                        efface_2()
+                        if dx == 0:
+                            for i in range(len(grille_global)):
+                                grille_global[i] = [None] + grille_global[i]
+                        dx = dx-1 if dx > 0 else 0
+                        grille_affiche = decale_grille_displayed(grille_global, dy, dx)
+                        display_grille(grille_affiche)
+                    elif touche == "d":  # droite
+                        if generation_forced:
+                            generation = True
+                        efface_2()
+                        if dx >= len(grille_global[0]) - NB_CASES[0]:
+                            for i in range(len(grille_global)):
+                                grille_global[i] = grille_global[i] + [None]
+                        dx += 1
+                        grille_affiche = decale_grille_displayed(grille_global, dy, dx)
+                        display_grille(grille_affiche)
+                else:
+                    if touche == "Down":
+                        if len(tuiles_possibles) > 25:
+                            decale = decale + 1 if decale < len(tuiles_possibles) - 25 else decale
+                            fltk.efface("choices_display")
+                            fltk.efface("scroll_bar")
+                            for tuile in tuiles_possibles_affiche:
+                                    fltk.efface(tuile["nom"])
+                            tuiles_possibles_affiche = tuiles_possibles[decale:25+decale]
+                            champs_possibilites(tuiles_possibles_affiche)
+                            scroll_bar(len(tuiles_possibles), decale)
+                    elif touche == "Up":
+                        if len(tuiles_possibles) > 25:
+                            decale = decale - 1 if decale > 0 else 0
+                            fltk.efface("choices_display")
+                            fltk.efface("scroll_bar")
+                            for tuile in tuiles_possibles_affiche:
+                                    fltk.efface(tuile["nom"])
+                            tuiles_possibles_affiche = tuiles_possibles[decale:25+decale]
+                            champs_possibilites(tuiles_possibles_affiche)
+                            scroll_bar(len(tuiles_possibles), decale)
             else:
-                if touche == "Down":
-                    if len(tuiles_possibles) > 25:
-                        decale = decale + 1 if decale < len(tuiles_possibles) - 25 else decale
-                        fltk.efface("choices_display")
-                        fltk.efface("scroll_bar")
-                        for tuile in tuiles_possibles_affiche:
-                                fltk.efface(tuile["nom"])
-                        tuiles_possibles_affiche = tuiles_possibles[decale:25+decale]
-                        champs_possibilites(tuiles_possibles_affiche)
-                        scroll_bar(len(tuiles_possibles), decale)
-                elif touche == "Up":
-                    if len(tuiles_possibles) > 25:
-                        decale = decale - 1 if decale > 0 else 0
-                        fltk.efface("choices_display")
-                        fltk.efface("scroll_bar")
-                        for tuile in tuiles_possibles_affiche:
-                                fltk.efface(tuile["nom"])
-                        tuiles_possibles_affiche = tuiles_possibles[decale:25+decale]
-                        champs_possibilites(tuiles_possibles_affiche)
-                        scroll_bar(len(tuiles_possibles), decale)
-                
+                if champ_texte:
+                    print(touche)
+                    width_txt, _ = fltk.taille_texte(nom_carte, taille=20)
+                    if width_txt < WIDTH//2 - MARGIN//20 - MARGIN*2//10:
+                        if touche in caracteres_valides:
+                            nom_carte = nom_carte[:text_cursor] + touche + nom_carte[text_cursor:]
+                            text_cursor += 1
+                            fltk.efface("nom_carte_texte")
+                            fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, nom_carte, "black", "white", "center", taille=20, tag="nom_carte_texte")
+                        elif touche == "space":
+                            nom_carte = nom_carte[:text_cursor] + " " + nom_carte[text_cursor:]
+                            text_cursor += 1
+                            fltk.efface("nom_carte_texte")
+                            fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, nom_carte, "black", "white", "center", taille=20, tag="nom_carte_texte")
+                    if touche == "BackSpace":
+                        nom_carte = nom_carte[:text_cursor-1] + nom_carte[text_cursor:]
+                        text_cursor -= 1 if text_cursor > 0 else 0
+                        fltk.efface("nom_carte_texte")
+                        fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, nom_carte, "black", "white", "center", taille=20, tag="nom_carte_texte")
+                    elif touche == "Return":
+                        champ_texte = False
+                    elif touche == "Left":
+                        text_cursor = text_cursor - 1 if text_cursor > 0 else 0
+                    elif touche == "Right":
+                        text_cursor = text_cursor + 1 if text_cursor < len(nom_carte) else text_cursor
+    if menu:
+        if cursor:
+            fltk.efface(cursor)
+        width_txt, height_txt = fltk.taille_texte(nom_carte, taille=20)
+        width_left, _ = fltk.taille_texte(nom_carte[:text_cursor], taille=20)
+        current = fltk.time()
+        if current - temps_derniere_alternance > 0.5:
+            curseur_visible = not curseur_visible
+            temps_derniere_alternance = current
+        if curseur_visible:
+            x_cursor = (MARGIN//10 + WIDTH//2 - MARGIN//20)//2 - width_txt  // 2 + width_left
+            y_top = (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2 - height_txt // 2
+            y_bot = (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2 + height_txt // 2
+            cursor = fltk.ligne(x_cursor, y_top, x_cursor, y_bot, couleur="black", epaisseur=2)
+            
     #generation infini
     if not menu and generation and generation_forced:
         generation = False
