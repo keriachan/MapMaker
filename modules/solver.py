@@ -115,7 +115,7 @@ def solver_profondeur_contrainte(grille: list[list[str]], tuiles: list[dict], ri
     for tuile in tuiles_possibles:
         grille[i][j] = tuile["nom"]
         nouvelle_liste = liste_possibilitees[1:] #peut-etre faire une deepcopy
-        if solver_profondeur_contrainte(grille, tuiles, riviere, nouvelle_liste, i, j):
+        if solver_profondeur_contrainte(grille, tuiles, riviere, nouvelle_liste, j, i):
             return True
         grille[i][j] = None
     return False
