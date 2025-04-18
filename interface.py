@@ -365,12 +365,11 @@ while True:
                         fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, nom_carte, "black", "white", "center", taille=20, tag="nom_carte_texte")
                     elif touche == "Return":
                         champ_texte = False
+                        fltk.efface(cursor)
                     elif touche == "Left":
                         text_cursor = text_cursor - 1 if text_cursor > 0 else 0
                     elif touche == "Right":
                         text_cursor = text_cursor + 1 if text_cursor < len(nom_carte) else text_cursor
-                else:
-                    fltk.efface(cursor)
     if menu and champ_texte:
         if cursor:
             fltk.efface(cursor)
