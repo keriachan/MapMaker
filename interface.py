@@ -196,10 +196,11 @@ while True:
                     decale = 0 #decale pour le scroll
                 elif fltk.est_objet_survole("nom_carte"):
                     champ_texte = True
-                    
+                if not champ_texte:
+                    fltk.efface(cursor)
         elif fltk.type_ev(ev) == "ClicDroit":
             x, y = fltk.abscisse(ev), fltk.ordonnee(ev)
-            if not choix:
+            if not menu and not choix:
                 i, j = convert_click_indice(x, y)
                 k, l = convert_indice_click(i, j)
                 if grille_global[i+dy][j+dx] is not None:
@@ -323,7 +324,6 @@ while True:
                             scroll_bar(len(tuiles_possibles), decale)
             else:
                 if champ_texte:
-                    print(touche)
                     width_txt, _ = fltk.taille_texte(nom_carte, taille=20)
                     if width_txt < WIDTH//2 - MARGIN//20 - MARGIN*2//10:
                         if touche in caracteres_valides:
@@ -347,7 +347,9 @@ while True:
                         text_cursor = text_cursor - 1 if text_cursor > 0 else 0
                     elif touche == "Right":
                         text_cursor = text_cursor + 1 if text_cursor < len(nom_carte) else text_cursor
-    if menu:
+                else:
+                    fltk.efface(cursor)
+    if menu and champ_texte:
         if cursor:
             fltk.efface(cursor)
         width_txt, height_txt = fltk.taille_texte(nom_carte, taille=20)
