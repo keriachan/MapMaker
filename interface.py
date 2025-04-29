@@ -146,6 +146,8 @@ while True:
         if not menu:
             grille_affiche = decale_grille_displayed(grille_global, dy, dx)
         if fltk.type_ev(ev) == "Quitte":
+            if not menu:
+                reader.save_json(grille_global, nom_carte)
             break
         elif fltk.type_ev(ev) == "ClicGauche":
             x, y = fltk.abscisse(ev), fltk.ordonnee(ev)

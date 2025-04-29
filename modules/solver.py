@@ -38,7 +38,7 @@ def tuile_possibilitees(tuiles: list[dict], grille: list[list[str]], liste_possi
         for i in range(len(grille)):
             for j in range(len(grille[0])):
                 if grille[i][j] is None:
-                    tuiles_possibles = gestion_tuiles.tuiles_possibles(tuiles, grille, i, j, riviere)
+                    tuiles_possibles = gestion_tuiles.tuiles_possibles(tuiles, grille, i, j, tuiles, riviere)
                     liste_possibilitees.append({"possibilitees": tuiles_possibles, "coord": (i, j)})
     #toutes les autres iterations
     else:
@@ -49,7 +49,7 @@ def tuile_possibilitees(tuiles: list[dict], grille: list[list[str]], liste_possi
             if 0 <= i < len(grille) and 0 <= j < len(grille[0]) and grille[i][j] is None:
                 for tuile in liste_possibilitees:
                     if tuile["coord"] == (i, j):
-                        tuile["possibilitees"] = gestion_tuiles.tuiles_possibles(tuiles, grille, i, j, riviere)
+                        tuile["possibilitees"] = gestion_tuiles.tuiles_possibles(tuiles, grille, i, j, tuiles, riviere)
                         break
     return sorted(liste_possibilitees, key=lambda x: len(x["possibilitees"]))
 
@@ -73,7 +73,7 @@ def solver_profondeur(grille: list[list[str]], tuiles: list[dict], riviere=False
     for i in range(len(grille)):
         for j in range(len(grille[0])):
             if grille[i][j] is None:
-                tuiles_possibles = gestion_tuiles.tuiles_possibles(tuiles, grille, i, j, riviere)
+                tuiles_possibles = gestion_tuiles.tuiles_possibles(tuiles, grille, i, j, tuiles, riviere)
                 if len(tuiles_possibles) == 0:
                     return False
                 random.shuffle(tuiles_possibles)
@@ -141,7 +141,7 @@ def solver_largeur(grille: list[list[str]], tuiles: list[dict], riviere=False) -
             for i in range(len(current_grille)):
                 for j in range(len(current_grille[0])):
                     if current_grille[i][j] is None:
-                        tuiles_possibles = gestion_tuiles.tuiles_possibles(tuiles, current_grille, i, j, riviere)
+                        tuiles_possibles = gestion_tuiles.tuiles_possibles(tuiles, current_grille, i, j, tuiles, riviere)
                         random.shuffle(tuiles_possibles)
                         for tuile in tuiles_possibles:
                             nouvelle_grille = copy.deepcopy(current_grille)

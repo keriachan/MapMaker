@@ -1,4 +1,6 @@
-def emplacement_valide(grille: list[list[str]], i: int, j: int, nom_tuile: str, riviere: bool = False) -> bool:
+from modules import reader
+
+def emplacement_valide(grille: list[list[str]], i: int, j: int, nom_tuile: str, tuiles, riviere: bool = False, mer: bool = False) -> bool:
     """Determine si la tuile nom_tuile peut être placée à la position (i, j) de la grille.
 
     Args:
@@ -11,6 +13,13 @@ def emplacement_valide(grille: list[list[str]], i: int, j: int, nom_tuile: str, 
     Returns:
         bool: True si la tuile peut être placée, False sinon.
     """
+    if mer:
+        verif = False
+        for c in nom_tuile: #Mer/bord
+            if c in ["S", "D", "H", "G", "B"]:
+                verif = True
+        if not verif:
+            return False
     direction = [(-1, 0), (0, 1), (1, 0), (0, -1)]
     error = 0
     for l, (dx, dy) in enumerate(direction):
@@ -25,10 +34,10 @@ def emplacement_valide(grille: list[list[str]], i: int, j: int, nom_tuile: str, 
     if error == 4:
         return False
     if riviere:
-        return riviere_valide(grille, i, j, nom_tuile)   
+        return riviere_valide(grille, i, j, nom_tuile, tuiles)   
     return True
 
-def riviere_valide(grille, i, j, nom_tuile):
+def riviere_valide(grille, i, j, nom_tuile, tuiles):
     """Vérifie si la tuile à la position (i, j) respecte les contraintes de rivière.
 
     Args:
@@ -55,13 +64,13 @@ def riviere_valide(grille, i, j, nom_tuile):
     for k in range(len(indices_R)):
         dx, dy = direction[indices_R[k]]
         x, y = i + dx, j + dy
-        cote_temp, visite = parcours_riviere(grille, x, y, visite)
+        cote_temp, visite = parcours_riviere(grille, x, y, visite, tuiles)
         cote.append(cote_temp)
     if False in cote or len(cote) != len(set(cote)):
         return False
     return True
 
-def parcours_riviere(grille, i, j, visite) -> tuple[str, set]:
+def parcours_riviere(grille, i, j, visite, tuiles) -> tuple[str, set]:
     """Parcours de la rivière à partir de la position (i, j) dans la grille.
 
     Args:
@@ -77,8 +86,13 @@ def parcours_riviere(grille, i, j, visite) -> tuple[str, set]:
         return False, visite
     visite.add((i, j))
     
-    if i < 0 or i >= len(grille) or j < 0 or j >= len(grille[0]) or grille[i][j] is None: #hors map ou pas de tuile
+    if 0 > i or i >= len(grille) or 0 > j or j >= len(grille[0]): #hors map ou pas de tuile
         return "vide", visite
+    if grille[i][j] is None:
+        if len(tuiles_possibles(tuiles, grille, i, j, tuiles, True, True)) > 0:
+            return "vide", visite
+        else:
+            return False, visite
     
     elif "M" in  grille[i][j]: #Montagne
         return "M", visite
@@ -98,7 +112,7 @@ def parcours_riviere(grille, i, j, visite) -> tuple[str, set]:
         else:
             return cote, visite
 
-def tuiles_possibles(tuiles: list[dict], grille: list[list[str]], i: int, j: int, riviere: bool = False) -> list[dict]:
+def tuiles_possibles(tuiles: list[dict], grille: list[list[str]], i: int, j: int, tuiles_dico, riviere: bool = False, mer: bool = False) -> list[dict]:
     """Renvoie la liste des tuiles qui peuvent être placées à la position (i, j) de la grille.
 
     Args:
@@ -111,4 +125,4 @@ def tuiles_possibles(tuiles: list[dict], grille: list[list[str]], i: int, j: int
     Returns:
         list[dict]:
     """
-    return [tuile for tuile in tuiles if emplacement_valide(grille, i, j, tuile["nom"], riviere)]
+    return [tuile for tuile in tuiles if emplacement_valide(grille, i, j, tuile["nom"], tuiles_dico, riviere, mer)]
