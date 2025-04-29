@@ -2,7 +2,7 @@ from modules import fltk, gestion_tuiles, reader, solver
 import random, copy, string
 
 
-WIDTH, HEIGHT = 800, 800
+WIDTH, HEIGHT = 600, 600
 MARGIN = WIDTH//5
 NB_CASES = [10, 10] #largeur, hauteur de la grille
 
@@ -74,59 +74,59 @@ def position_to_decale(y, taille):
 
 def affiche_menu():
     fltk.rectangle(MARGIN, MARGIN//10, WIDTH - MARGIN, MARGIN//10 + HEIGHT//8, "black", "white", 1, "menu")
-    fltk.texte(WIDTH//2, MARGIN//10 + HEIGHT//16, "MENU", "black", "white", "center",taille=50, tag="menu")
+    fltk.texte(WIDTH//2, MARGIN//10 + HEIGHT//16, "MENU", "black", "white", "center",taille=WIDTH//16, tag="menu")
     
     #new map
     fltk.rectangle(MARGIN//10, MARGIN*2//10 + HEIGHT//8, WIDTH//2 - MARGIN//20, MARGIN*2//10 + HEIGHT*2//8, "black", "white", 1, "menu")
-    fltk.texte(WIDTH//4, MARGIN*2//10 + HEIGHT//8 + HEIGHT//16, "Nouvelle carte", "black", "white", "center", taille=30, tag="menu")
+    fltk.texte(WIDTH//4, MARGIN*2//10 + HEIGHT//8 + HEIGHT//16, "Nouvelle carte", "black", "white", "center", taille=WIDTH//16 - WIDTH//40, tag="menu")
     
     #nom de la carte
     fltk.rectangle(MARGIN//10, MARGIN*3//10 + HEIGHT*2//8, WIDTH//2 - MARGIN//20, MARGIN*3//10 + HEIGHT*2//8 + HEIGHT//16, "black", "white", 1, "menu")
-    fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*3//10 + HEIGHT*2//8 + MARGIN*3//10 + HEIGHT*2//8 + HEIGHT//16)//2, "Nom de la carte :", "black", "white", "center", taille=20, tag="menu")
+    fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*3//10 + HEIGHT*2//8 + MARGIN*3//10 + HEIGHT*2//8 + HEIGHT//16)//2, "Nom de la carte :", "black", "white", "center", taille=WIDTH//40, tag="menu")
     
     fltk.rectangle(MARGIN//10, MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16, WIDTH//2 - MARGIN//20, MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16, "black", "white", 1, "nom_carte")
-    fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, "Nom de la carte", "black", "white", "center", taille=20, tag="nom_carte_texte")
+    fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, "Nom de la carte", "black", "white", "center", taille=WIDTH//40, tag="nom_carte_texte")
     
     #largeur
     fltk.rectangle(MARGIN//10, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16, WIDTH//2 - MARGIN//20 - WIDTH//8, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT*2//16, "black", "white", 1, "menu")
-    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8)//2, (MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + MARGIN*4//10 + HEIGHT*3//8 + HEIGHT*2//16)//2, "Largeur de la carte :", "black", "white", "center", taille=20, tag="menu")
+    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8)//2, (MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + MARGIN*4//10 + HEIGHT*3//8 + HEIGHT*2//16)//2, "Largeur de la carte :", "black", "white", "center", taille=WIDTH//40, tag="menu")
     
     fltk.rectangle(WIDTH//2 + MARGIN//20 - WIDTH//8, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16, WIDTH//2 - MARGIN//10 - WIDTH//32, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT*2//16, "black", "white", 1, "menu")
-    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8 + WIDTH//2 - MARGIN//10 - WIDTH//32)//2, (MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + MARGIN*4//10 + HEIGHT*3//8 + HEIGHT*2//16)//2, f"{NB_CASES[0]}", "black", "white", "center", taille=20, tag="largeur_case")
+    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8 + WIDTH//2 - MARGIN//10 - WIDTH//32)//2, (MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + MARGIN*4//10 + HEIGHT*3//8 + HEIGHT*2//16)//2, f"{NB_CASES[0]}", "black", "white", "center", taille=WIDTH//40, tag="largeur_case")
     
     fltk.rectangle(WIDTH//2 - MARGIN/20 - WIDTH//32, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16, WIDTH//2 - MARGIN//20, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + HEIGHT//32 - MARGIN//40, "black", "white", 1, "up_largeur")
-    fltk.texte((WIDTH//2 - MARGIN/20 - WIDTH//32 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + HEIGHT//32 - MARGIN//40)//2, "up", "black", "white", "center", taille=10, tag="menu")
+    fltk.texte((WIDTH//2 - MARGIN/20 - WIDTH//32 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + HEIGHT//32 - MARGIN//40)//2, "up", "black", "white", "center", taille=WIDTH//80, tag="menu")
     
     fltk.rectangle(WIDTH//2 - MARGIN/20 - WIDTH//32, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + HEIGHT//32 + MARGIN//40, WIDTH//2 - MARGIN//20, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + HEIGHT*2//32, "black", "white", 1, "down_largeur")
-    fltk.texte((WIDTH//2 - MARGIN/20 - WIDTH//32 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + HEIGHT//32 + MARGIN//40 + MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + HEIGHT*2//32)//2, "down", "black", "white", "center", taille=7, tag="menu")
+    fltk.texte((WIDTH//2 - MARGIN/20 - WIDTH//32 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + HEIGHT//32 + MARGIN//40 + MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + HEIGHT*2//32)//2, "down", "black", "white", "center", taille=WIDTH//114, tag="menu") #police 7 pour taille 800
     
     #hauteur
     fltk.rectangle(MARGIN//10,  MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16,  WIDTH//2 - MARGIN//20 - WIDTH//8,  MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*3//16, "black", "white", 1, "menu")
-    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8)//2, (MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*3//16)//2, "Hauteur de la carte :", "black", "white", "center", taille=20, tag="menu")
+    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8)//2, (MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*3//16)//2, "Hauteur de la carte :", "black", "white", "center", taille=WIDTH//40, tag="menu")
     
     fltk.rectangle(WIDTH//2 + MARGIN//20 - WIDTH//8, MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16, WIDTH//2 - MARGIN//10 - WIDTH//32, MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*3//16, "black", "white", 1, "menu")
-    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8 + WIDTH//2 - MARGIN//10 - WIDTH//32)//2, (MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*3//16)//2, f"{NB_CASES[1]}", "black", "white", "center", taille=20, tag="hauteur_case")
+    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8 + WIDTH//2 - MARGIN//10 - WIDTH//32)//2, (MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*3//16)//2, f"{NB_CASES[1]}", "black", "white", "center", taille=WIDTH//40, tag="hauteur_case")
 
     fltk.rectangle(WIDTH//2 - MARGIN//20 - WIDTH//32, MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16, WIDTH//2 - MARGIN//20, MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + HEIGHT//32 - MARGIN//40, "black", "white", 1, "up_hauteur")
-    fltk.texte((WIDTH//2 - MARGIN//20 - WIDTH//32 + WIDTH//2 - MARGIN//20)//2, (MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + HEIGHT//32 - MARGIN//40)//2, "up", "black", "white", "center", taille=10, tag="menu")
+    fltk.texte((WIDTH//2 - MARGIN//20 - WIDTH//32 + WIDTH//2 - MARGIN//20)//2, (MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + HEIGHT//32 - MARGIN//40)//2, "up", "black", "white", "center", taille=WIDTH//80, tag="menu")
 
     fltk.rectangle(WIDTH//2 - MARGIN//20 - WIDTH//32, MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + HEIGHT//32 + MARGIN//40, WIDTH//2 - MARGIN//20, MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + HEIGHT*2//32, "black", "white", 1, "down_hauteur")
-    fltk.texte((WIDTH//2 - MARGIN//20 - WIDTH//32 + WIDTH//2 - MARGIN//20)//2, (MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + HEIGHT//32 + MARGIN//40 + MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + HEIGHT*2//32)//2, "down", "black", "white", "center", taille=7, tag="menu")
+    fltk.texte((WIDTH//2 - MARGIN//20 - WIDTH//32 + WIDTH//2 - MARGIN//20)//2, (MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + HEIGHT//32 + MARGIN//40 + MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + HEIGHT*2//32)//2, "down", "black", "white", "center", taille=WIDTH//114, tag="menu")
 
     #LANCER
     fltk.rectangle(MARGIN//10, HEIGHT - HEIGHT//8 - MARGIN//10, WIDTH//2 - MARGIN//20, HEIGHT - MARGIN//10, "black", "white", 1, "new_map")
-    fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (HEIGHT - HEIGHT//8 - MARGIN//10 + HEIGHT - MARGIN//10)//2, "Commencer", "black", "white", "center", taille=30, tag="new_map")
+    fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (HEIGHT - HEIGHT//8 - MARGIN//10 + HEIGHT - MARGIN//10)//2, "Commencer", "black", "white", "center", taille=WIDTH//16 - WIDTH//40, tag="new_map")
     
     #load map
     fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*2//10 + HEIGHT//8, WIDTH - MARGIN//10, MARGIN*2//10 + HEIGHT*2//8, "black", "white", 1, "menu")
-    fltk.texte(WIDTH*3//4, MARGIN*2//10 + HEIGHT//8 + HEIGHT//16, "Charger une carte", "black", "white", "center", taille=30, tag="menu")
+    fltk.texte(WIDTH*3//4, MARGIN*2//10 + HEIGHT//8 + HEIGHT//16, "Charger une carte", "black", "white", "center", taille=WIDTH//16 - WIDTH//40, tag="menu")
     
     #map sauvegardée
     fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*3//10 + HEIGHT*2//8, WIDTH - MARGIN//10, HEIGHT - HEIGHT//8 - MARGIN*2//10, "black", "white", 1, "menu")
     
     #LANCER
     fltk.rectangle(WIDTH//2 + MARGIN//20, HEIGHT - HEIGHT//8 - MARGIN//10, WIDTH - MARGIN//10, HEIGHT - MARGIN//10, "black", "white", 1, "load_map")
-    fltk.texte((WIDTH//2 + MARGIN//20 + WIDTH - MARGIN//10)//2, (HEIGHT - HEIGHT//8 - MARGIN//10 + HEIGHT - MARGIN//10)//2, "Charger", "black", "white", "center", taille=30, tag="load_map")
+    fltk.texte((WIDTH//2 + MARGIN//20 + WIDTH - MARGIN//10)//2, (HEIGHT - HEIGHT//8 - MARGIN//10 + HEIGHT - MARGIN//10)//2, "Charger", "black", "white", "center", taille=WIDTH//16 - WIDTH//40, tag="load_map")
     
 fltk.cree_fenetre(WIDTH, HEIGHT)
 fltk.rectangle(0, 0, WIDTH, HEIGHT, remplissage="lightgrey", tag="background")
@@ -346,23 +346,23 @@ while True:
                             scroll_bar(len(tuiles_possibles), decale)
             else:
                 if champ_texte:
-                    width_txt, _ = fltk.taille_texte(nom_carte, taille=20)
+                    width_txt, _ = fltk.taille_texte(nom_carte, taille=WIDTH//40)
                     if width_txt < WIDTH//2 - MARGIN//20 - MARGIN*2//10:
                         if touche in caracteres_valides:
                             nom_carte = nom_carte[:text_cursor] + touche + nom_carte[text_cursor:]
                             text_cursor += 1
                             fltk.efface("nom_carte_texte")
-                            fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, nom_carte, "black", "white", "center", taille=20, tag="nom_carte_texte")
+                            fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, nom_carte, "black", "white", "center", taille=WIDTH//40, tag="nom_carte_texte")
                         elif touche == "space":
                             nom_carte = nom_carte[:text_cursor] + " " + nom_carte[text_cursor:]
                             text_cursor += 1
                             fltk.efface("nom_carte_texte")
-                            fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, nom_carte, "black", "white", "center", taille=20, tag="nom_carte_texte")
+                            fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, nom_carte, "black", "white", "center", taille=WIDTH//40, tag="nom_carte_texte")
                     if touche == "BackSpace":
                         nom_carte = nom_carte[:text_cursor-1] + nom_carte[text_cursor:]
                         text_cursor -= 1 if text_cursor > 0 else 0
                         fltk.efface("nom_carte_texte")
-                        fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, nom_carte, "black", "white", "center", taille=20, tag="nom_carte_texte")
+                        fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, nom_carte, "black", "white", "center", taille=WIDTH//40, tag="nom_carte_texte")
                     elif touche == "Return":
                         champ_texte = False
                         fltk.efface(cursor)
@@ -373,8 +373,8 @@ while True:
     if menu and champ_texte:
         if cursor:
             fltk.efface(cursor)
-        width_txt, height_txt = fltk.taille_texte(nom_carte, taille=20)
-        width_left, _ = fltk.taille_texte(nom_carte[:text_cursor], taille=20)
+        width_txt, height_txt = fltk.taille_texte(nom_carte, taille=WIDTH//40)
+        width_left, _ = fltk.taille_texte(nom_carte[:text_cursor], taille=WIDTH//40)
         current = fltk.time()
         if current - temps_derniere_alternance > 0.5:
             curseur_visible = not curseur_visible
