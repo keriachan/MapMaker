@@ -2,7 +2,7 @@ from modules import fltk, gestion_tuiles, reader, solver
 import random, copy, string
 
 
-WIDTH, HEIGHT = 600, 600
+WIDTH, HEIGHT = 1000, 1000
 MARGIN = WIDTH//5
 NB_CASES = [10, 10] #largeur, hauteur de la grille
 
@@ -125,11 +125,11 @@ def affiche_menu():
     fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*3//10 + HEIGHT*2//8, WIDTH - MARGIN//10, HEIGHT - HEIGHT//8 - MARGIN*2//10, "black", "white", 1, "menu")
     data = reader.read()
     longueur = len(data) if len(data) < 5 else 5
-    taille = (HEIGHT - HEIGHT//8 - MARGIN*2//10 - MARGIN*3//10 + HEIGHT*2//8)//5
+    taille = (HEIGHT - HEIGHT//8 - MARGIN*2//10 - (MARGIN*3//10 + HEIGHT*2//8))//5
     for i in range(longueur):
-        print(i)
-        fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*3//10 + HEIGHT*2//8 + i * taille, WIDTH - MARGIN//10, MARGIN*3//10 + HEIGHT*2//8 + (i + 1) * taille, "black", epaisseur=1, tag="uwu")
-    
+        fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*3//10 + HEIGHT*2//8 + (i * taille), WIDTH - MARGIN//10, MARGIN*3//10 + HEIGHT*2//8 + ((i + 1) * taille), "black", epaisseur=1)
+        fltk.texte(WIDTH*3//4, MARGIN*3//10 + HEIGHT*2//8  + taille//2 + (i * taille), data[i]["nom_carte"], "black", "white", "center", taille=WIDTH//16 - WIDTH//40)
+
     #LANCER
     fltk.rectangle(WIDTH//2 + MARGIN//20, HEIGHT - HEIGHT//8 - MARGIN//10, WIDTH - MARGIN//10, HEIGHT - MARGIN//10, "black", "white", 1, "load_map")
     fltk.texte((WIDTH//2 + MARGIN//20 + WIDTH - MARGIN//10)//2, (HEIGHT - HEIGHT//8 - MARGIN//10 + HEIGHT - MARGIN//10)//2, "Charger", "black", "white", "center", taille=WIDTH//16 - WIDTH//40, tag="load_map")
@@ -200,19 +200,19 @@ while True:
                 if fltk.est_objet_survole("up_largeur"):
                     NB_CASES[0] = NB_CASES[0] + 1 if NB_CASES[0] < 50 else NB_CASES[0]
                     fltk.efface("largeur_case")
-                    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8 + WIDTH//2 - MARGIN//10 - WIDTH//32)//2, (MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + MARGIN*4//10 + HEIGHT*3//8 + HEIGHT*2//16)//2, f"{NB_CASES[0]}", "black", "white", "center", taille=20, tag="largeur_case")
+                    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8 + WIDTH//2 - MARGIN//10 - WIDTH//32)//2, (MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + MARGIN*4//10 + HEIGHT*3//8 + HEIGHT*2//16)//2, f"{NB_CASES[0]}", "black", "white", "center", taille=WIDTH//40, tag="largeur_case")
                 elif fltk.est_objet_survole("down_largeur"):
                     NB_CASES[0] = NB_CASES[0] - 1 if NB_CASES[0] > 2 else NB_CASES[0]
                     fltk.efface("largeur_case")
-                    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8 + WIDTH//2 - MARGIN//10 - WIDTH//32)//2, (MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + MARGIN*4//10 + HEIGHT*3//8 + HEIGHT*2//16)//2, f"{NB_CASES[0]}", "black", "white", "center", taille=20, tag="largeur_case")
+                    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8 + WIDTH//2 - MARGIN//10 - WIDTH//32)//2, (MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16 + MARGIN*4//10 + HEIGHT*3//8 + HEIGHT*2//16)//2, f"{NB_CASES[0]}", "black", "white", "center", taille=WIDTH//40, tag="largeur_case")
                 elif fltk.est_objet_survole("up_hauteur"):
                     NB_CASES[1] = NB_CASES[1] + 1 if NB_CASES[1] < 50 else NB_CASES[1]
                     fltk.efface("hauteur_case")
-                    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8 + WIDTH//2 - MARGIN//10 - WIDTH//32)//2, (MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*3//16)//2, f"{NB_CASES[1]}", "black", "white", "center", taille=20, tag="hauteur_case")
+                    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8 + WIDTH//2 - MARGIN//10 - WIDTH//32)//2, (MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*3//16)//2, f"{NB_CASES[1]}", "black", "white", "center", taille=WIDTH//40, tag="hauteur_case")
                 elif fltk.est_objet_survole("down_hauteur"):
                     NB_CASES[1] = NB_CASES[1] - 1 if NB_CASES[1] > 2 else NB_CASES[1]
                     fltk.efface("hauteur_case")
-                    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8 + WIDTH//2 - MARGIN//10 - WIDTH//32)//2, (MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*3//16)//2, f"{NB_CASES[1]}", "black", "white", "center", taille=20, tag="hauteur_case")
+                    fltk.texte((WIDTH//2 + MARGIN//20 - WIDTH//8 + WIDTH//2 - MARGIN//10 - WIDTH//32)//2, (MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*2//16 + MARGIN*5//10 + HEIGHT*3//8 + HEIGHT*3//16)//2, f"{NB_CASES[1]}", "black", "white", "center", taille=WIDTH//40, tag="hauteur_case")
                 elif fltk.est_objet_survole("new_map"):
                     efface_2()
                     menu = False
