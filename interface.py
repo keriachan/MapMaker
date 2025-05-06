@@ -127,8 +127,9 @@ def affiche_menu():
     longueur = len(data) if len(data) < 5 else 5
     taille = (HEIGHT - HEIGHT//8 - MARGIN*2//10 - (MARGIN*3//10 + HEIGHT*2//8))//5
     for i in range(longueur):
-        fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*3//10 + HEIGHT*2//8 + (i * taille), WIDTH - MARGIN//10, MARGIN*3//10 + HEIGHT*2//8 + ((i + 1) * taille), "black", epaisseur=1)
-        fltk.texte(WIDTH*3//4, MARGIN*3//10 + HEIGHT*2//8  + taille//2 + (i * taille), data[i]["nom_carte"], "black", "white", "center", taille=WIDTH//16 - WIDTH//40)
+        name = data[i]["nom_carte"]
+        fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*3//10 + HEIGHT*2//8 + (i * taille), WIDTH - MARGIN//10, MARGIN*3//10 + HEIGHT*2//8 + ((i + 1) * taille), "black", epaisseur=1, tag=f"rect_{name}")
+        fltk.texte(WIDTH*3//4, MARGIN*3//10 + HEIGHT*2//8  + taille//2 + (i * taille), name, "black", "white", "center", taille=WIDTH//16 - WIDTH//40, tag=f"{name}")
 
     #LANCER
     fltk.rectangle(WIDTH//2 + MARGIN//20, HEIGHT - HEIGHT//8 - MARGIN//10, WIDTH - MARGIN//10, HEIGHT - MARGIN//10, "black", "white", 1, "load_map")
@@ -145,6 +146,7 @@ text_cursor = len(nom_carte)
 cursor = None
 curseur_visible = True
 temps_derniere_alternance = fltk.time()
+data = reader.read()
 
 while True:
     ev = fltk.donne_ev()
@@ -226,6 +228,11 @@ while True:
                     decale = 0 #decale pour le scroll
                 elif fltk.est_objet_survole("nom_carte"):
                     champ_texte = True
+                for d in data:
+                    name = d["nom_carte"]
+                    obj = f"rect_{name}"
+                    if fltk.est_objet_survole(obj):
+                        print(name)
                 if not champ_texte:
                     fltk.efface(cursor)
         elif fltk.type_ev(ev) == "ClicDroit":
