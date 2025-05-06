@@ -124,9 +124,11 @@ def affiche_menu():
     #map sauvegardée
     fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*3//10 + HEIGHT*2//8, WIDTH - MARGIN//10, HEIGHT - HEIGHT//8 - MARGIN*2//10, "black", "white", 1, "menu")
     data = reader.read()
-    longueur = len(data) if len(data) < 10 else 10
+    longueur = len(data) if len(data) < 5 else 5
+    taille = (HEIGHT - HEIGHT//8 - MARGIN*2//10 - MARGIN*3//10 + HEIGHT*2//8)//5
     for i in range(longueur):
-        fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*3//10 + HEIGHT*2//8, WIDTH//2 + MARGIN//20, MARGIN*3//10 + HEIGHT*2//8)
+        print(i)
+        fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*3//10 + HEIGHT*2//8 + i * taille, WIDTH - MARGIN//10, MARGIN*3//10 + HEIGHT*2//8 + (i + 1) * taille, "black", epaisseur=1, tag="uwu")
     
     #LANCER
     fltk.rectangle(WIDTH//2 + MARGIN//20, HEIGHT - HEIGHT//8 - MARGIN//10, WIDTH - MARGIN//10, HEIGHT - MARGIN//10, "black", "white", 1, "load_map")
