@@ -85,7 +85,7 @@ def affiche_menu():
     fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*3//10 + HEIGHT*2//8 + MARGIN*3//10 + HEIGHT*2//8 + HEIGHT//16)//2, "Nom de la carte :", "black", "white", "center", taille=WIDTH//40, tag="menu")
     
     fltk.rectangle(MARGIN//10, MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16, WIDTH//2 - MARGIN//20, MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16, "black", "white", 1, "nom_carte")
-    fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, "Nom de la carte", "black", "white", "center", taille=WIDTH//40, tag="nom_carte_texte")
+    fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, "Nom_de_la_carte", "black", "white", "center", taille=WIDTH//40, tag="nom_carte_texte")
     
     #largeur
     fltk.rectangle(MARGIN//10, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT//16, WIDTH//2 - MARGIN//20 - WIDTH//8, MARGIN*4//10 + HEIGHT*3//8 + HEIGHT*2//16, "black", "white", 1, "menu")
@@ -122,17 +122,17 @@ def affiche_menu():
     fltk.texte(WIDTH*3//4, MARGIN*2//10 + HEIGHT//8 + HEIGHT//16, "Charger une carte", "black", "white", "center", taille=WIDTH//16 - WIDTH//40, tag="menu")
     
     #map sauvegardée
-    fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*3//10 + HEIGHT*2//8, WIDTH - MARGIN//10, HEIGHT - HEIGHT//8 - MARGIN*2//10, "black", "white", 1, "menu")
+    fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*3//10 + HEIGHT*2//8, WIDTH - MARGIN//10, HEIGHT - HEIGHT//8 - MARGIN*2//10, "black", "white", 1, tag="load_map_saved")
     data = reader.read()
     longueur = len(data) if len(data) < 5 else 5
     taille = (HEIGHT - HEIGHT//8 - MARGIN*2//10 - (MARGIN*3//10 + HEIGHT*2//8))//5
     for i in range(longueur):
         name = data[i]["nom_carte"]
-        fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*3//10 + HEIGHT*2//8 + (i * taille), WIDTH - MARGIN//10, MARGIN*3//10 + HEIGHT*2//8 + ((i + 1) * taille), "black", epaisseur=1, tag=f"rect_{name}")
+        fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*3//10 + HEIGHT*2//8 + (i * taille), WIDTH - MARGIN//10, MARGIN*3//10 + HEIGHT*2//8 + ((i + 1) * taille), "black",remplissage="white", epaisseur=1, tag=f"rect_{name}")
         fltk.texte(WIDTH*3//4, MARGIN*3//10 + HEIGHT*2//8  + taille//2 + (i * taille), name, "black", "white", "center", taille=WIDTH//16 - WIDTH//40, tag=f"{name}")
 
     #LANCER
-    fltk.rectangle(WIDTH//2 + MARGIN//20, HEIGHT - HEIGHT//8 - MARGIN//10, WIDTH - MARGIN//10, HEIGHT - MARGIN//10, "black", "white", 1, "load_map")
+    fltk.rectangle(WIDTH//2 + MARGIN//20, HEIGHT - HEIGHT//8 - MARGIN//10, WIDTH - MARGIN//10, HEIGHT - MARGIN//10, "black", "white", 1, tag="rect_load_map")
     fltk.texte((WIDTH//2 + MARGIN//20 + WIDTH - MARGIN//10)//2, (HEIGHT - HEIGHT//8 - MARGIN//10 + HEIGHT - MARGIN//10)//2, "Charger", "black", "white", "center", taille=WIDTH//16 - WIDTH//40, tag="load_map")
     
 fltk.cree_fenetre(WIDTH, HEIGHT)
@@ -140,7 +140,7 @@ fltk.rectangle(0, 0, WIDTH, HEIGHT, remplissage="lightgrey", tag="background")
 affiche_menu()
 menu = True
 champ_texte = False
-nom_carte = "Nom de la carte"
+nom_carte = "Nom_de_la_carte"
 caracteres_valides = string.ascii_letters + string.digits + string.punctuation
 text_cursor = len(nom_carte)
 cursor = None
@@ -228,11 +228,34 @@ while True:
                     decale = 0 #decale pour le scroll
                 elif fltk.est_objet_survole("nom_carte"):
                     champ_texte = True
-                for d in data:
-                    name = d["nom_carte"]
-                    obj = f"rect_{name}"
-                    if fltk.est_objet_survole(obj):
-                        print(name)
+                elif fltk.est_objet_survole("load_map_saved"):
+                    longueur = len(data) if len(data) < 5 else 5
+                    taille = (HEIGHT - HEIGHT//8 - MARGIN*2//10 - (MARGIN*3//10 + HEIGHT*2//8))//5
+                    for i in range(longueur):
+                        name = data[i]["nom_carte"]
+                        obj = f"rect_{name}"
+                        if fltk.est_objet_survole(obj):
+                            map_data = data[i]
+                            couleur = "grey"
+                        else:
+                            couleur = "white"
+                        fltk.efface(obj)
+                        fltk.efface(name)
+                        fltk.rectangle(WIDTH//2 + MARGIN//20, MARGIN*3//10 + HEIGHT*2//8 + (i * taille), WIDTH - MARGIN//10, MARGIN*3//10 + HEIGHT*2//8 + ((i + 1) * taille), "black",remplissage=couleur, epaisseur=1, tag=f"rect_{name}")
+                        fltk.texte(WIDTH*3//4, MARGIN*3//10 + HEIGHT*2//8  + taille//2 + (i * taille), name, "black", "white", "center", taille=WIDTH//16 - WIDTH//40, tag=f"{name}")
+                elif fltk.est_objet_survole("rect_load_map"):
+                    efface_2()
+                    menu = False
+                    grille_global = map_data["grille"]
+                    nom_carte = map_data["nom_carte"]
+                    dx , dy = 0, 0 #coin supérieur gauche de la grille affichée par rapport à la grille globale
+                    tuiles = reader.cree_dico("fichiers fournis/tuiles/")
+                    choix = False
+                    generation = True
+                    generation_forced = False
+                    riviere = False
+                    decale = 0 #decale pour le scroll
+                    display_grille(grille_global)
                 if not champ_texte:
                     fltk.efface(cursor)
         elif fltk.type_ev(ev) == "ClicDroit":
@@ -368,11 +391,11 @@ while True:
                             text_cursor += 1
                             fltk.efface("nom_carte_texte")
                             fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, nom_carte, "black", "white", "center", taille=WIDTH//40, tag="nom_carte_texte")
-                        elif touche == "space":
-                            nom_carte = nom_carte[:text_cursor] + " " + nom_carte[text_cursor:]
-                            text_cursor += 1
-                            fltk.efface("nom_carte_texte")
-                            fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, nom_carte, "black", "white", "center", taille=WIDTH//40, tag="nom_carte_texte")
+                        #elif touche == "space":
+                        #    nom_carte = nom_carte[:text_cursor] + " " + nom_carte[text_cursor:]
+                        #    text_cursor += 1
+                        #    fltk.efface("nom_carte_texte")
+                        #    fltk.texte((MARGIN//10 + WIDTH//2 - MARGIN//20)//2, (MARGIN*4//10 + HEIGHT*2//8 + HEIGHT//16 + MARGIN*3//10 + HEIGHT*3//8 + HEIGHT//16)//2, nom_carte, "black", "white", "center", taille=WIDTH//40, tag="nom_carte_texte")
                     if touche == "BackSpace":
                         nom_carte = nom_carte[:text_cursor-1] + nom_carte[text_cursor:]
                         text_cursor -= 1 if text_cursor > 0 else 0
