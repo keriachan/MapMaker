@@ -55,6 +55,14 @@ def efface_2():
     fltk.rectangle(0, 0, WIDTH, HEIGHT, remplissage="lightgrey", tag="background")
 
 def scroll_bar(taille, decale):
+    """
+    Dessine une barre de défilement verticale en fonction de la taille totale des éléments 
+    et de la position actuelle du décalage (élément affiché en haut).
+
+    Paramètres :
+    - taille (int) : nombre total d'éléments affichables (par exemple, lignes dans une liste).
+    - decale (int) : indice de l'élément actuellement en haut de l'affichage (décalage).
+    """
     max_height = HEIGHT - 2 * MARGIN
     bar_height = max_height * min(1, 25 / taille)
     y1 = MARGIN + (decale / max(1, taille - 25)) * (max_height - bar_height)
@@ -62,12 +70,22 @@ def scroll_bar(taille, decale):
     fltk.rectangle(WIDTH - MARGIN - 12, y1, WIDTH - MARGIN - 2, y2, "black", "grey", 1, "scroll_bar")
 
 def position_to_decale(y, taille):
+    """
+    Convertit une position verticale (y) sur la barre de défilement en décalage logique 
+    correspondant à l'indice de l'élément à afficher en haut.
+
+    Paramètres :
+    - y (float) : position verticale du curseur (souvent cliquée ou déplacée).
+    - taille (int) : nombre total d’éléments affichables.
+
+    Retour :
+    - decale (int) : indice de l’élément correspondant à la position y.
+    """
     max_height = HEIGHT - 2 * MARGIN
     bar_height = max_height * min(1, 25 / taille)
     
-    # Position relative de y dans la scroll zone (0 tout en haut, 1 tout en bas)
     y_rel = (y - MARGIN - bar_height / 2) / (max_height - bar_height)
-    y_rel = min(max(0, y_rel), 1)  # Clamp entre 0 et 1
+    y_rel = min(max(0, y_rel), 1)  
 
     decale = round(y_rel * max(0, taille - 25))
     return decale

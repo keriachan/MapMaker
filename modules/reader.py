@@ -1,7 +1,7 @@
 import os, json
 
 def cree_dico(chemin):
-    """lit le contenu d'un dossier et renvoie un dictionnaire contenant le nom et le chemin de chaque fichier.
+    """lit le contenu d'un dossier et renvoie une liste de dictionnaire contenant le nom et le chemin de chaque fichier.
 
     Args:
         chemin (str): chemin du dossier à lire
@@ -16,6 +16,12 @@ def cree_dico(chemin):
     return tuiles
 
 def save_json(grille, nom_carte):
+    """Met a jour le fichier save.json avec la grille et le nom de la carte.
+
+    Args:
+        grille (list[list]): grille globale de la carte
+        nom_carte (str): nom de la carte
+    """
     data = read()
     for d in data:
         if d["nom_carte"] == nom_carte:
@@ -26,6 +32,7 @@ def save_json(grille, nom_carte):
     writer.close()
     
 def read():
+    """Lit le fichier save.json et renvoie son contenu."""
     reader = open("save.json", "r", encoding="utf-8")
     try:
         data = json.load(reader)
